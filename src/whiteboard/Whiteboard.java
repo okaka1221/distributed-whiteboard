@@ -7,7 +7,8 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder; 
 
 public class Whiteboard extends JFrame implements ActionListener {
-	PaintCanvas canvas;
+	private PaintCanvas canvas = new PaintCanvas();;
+	private MenuItem menuItem = new MenuItem(canvas);
 	
 	private JToggleButton freedrawButton;
 	private JToggleButton eraseButton;
@@ -45,24 +46,15 @@ public class Whiteboard extends JFrame implements ActionListener {
 		getContentPane().add(splitPane);
 		
 		Container drawContainer = new Container();
+		drawContainer.setBackground(Color.WHITE);
 		splitPane.setRightComponent(drawContainer);
 		
-		canvas = new PaintCanvas();
 		canvas.setBounds(10, 10, 615, 535);
 		drawContainer.add(canvas);
 		
 		JPanel toolsPanel = new JPanel();
 		toolsPanel.setLayout(new GridLayout(12, 1));
 		splitPane.setLeftComponent(toolsPanel);
-		
-		ButtonGroup group = new ButtonGroup();
-		group.add(freedrawButton);
-		group.add(eraseButton);
-		group.add(textButton);
-		group.add(lineButton);
-		group.add(circleButton);
-		group.add(rectangleButton);
-		group.add(ovalButton);
 		
 		freedrawButton = new JToggleButton("Freedraw");
 		freedrawButton.setActionCommand("freedraw");
@@ -78,7 +70,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 		toolsPanel.add(sizeLabel);
 		
 		sizeCombo = new JComboBox<String>();
-		sizeCombo.setModel(new DefaultComboBoxModel<String>(new String[] {"2", "4", "6", "8", "10"}));
+		sizeCombo.setModel(new DefaultComboBoxModel<String>(new String[] {"2", "6", "10", "15"}));
 		sizeCombo.setSelectedIndex(0);
 		toolsPanel.add(sizeCombo);
 		
@@ -86,6 +78,8 @@ public class Whiteboard extends JFrame implements ActionListener {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				_size = Integer.parseInt(sizeCombo.getSelectedItem().toString());
+				canvas.setPenSize(_size);
+				
 			}
 		});
 		
@@ -129,6 +123,15 @@ public class Whiteboard extends JFrame implements ActionListener {
 		chatButton.addActionListener(this);
 		toolsPanel.add(chatButton);
 		
+		ButtonGroup group = new ButtonGroup();
+		group.add(freedrawButton);
+		group.add(eraseButton);
+		group.add(textButton);
+		group.add(lineButton);
+		group.add(circleButton);
+		group.add(rectangleButton);
+		group.add(ovalButton);
+		
 		menu = new JMenuBar();
 		setJMenuBar(menu);
 		
@@ -169,6 +172,47 @@ public class Whiteboard extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
+		
+		if (command.equals("freedraw")) {
+			canvas.setType(0);
+		} else if (command.contentEquals("erase")) {
+			canvas.setType(1);
+		} else if (command.contentEquals("color")) {
+			Color prevColor = _color;
+			Color selectedColor = JColorChooser.showDialog(this, "Select Pen Color", prevColor);
+			_color = selectedColor;
+			colorLabel.setBackground(_color);
+			canvas.setColor(_color);
+			
+		} else if (command.contentEquals("textbox")) {
+			canvas.setType(2);
+		} else if (command.contentEquals("line")) {
+			canvas.setType(3);
+		} else if (command.contentEquals("circle")) {
+			canvas.setType(4);
+		} else if (command.contentEquals("rectangle")) {
+			canvas.setType(5);
+		} else if (command.contentEquals("oval")) {
+			canvas.setType(6);
+		} else if (command.contentEquals("chat")) {
+			// TODO: ADD chat windpw
+			
+		} else if (command.contentEquals("new")) {
+			menuItem.setCanvas(canvas);
+			menuItem.newCanvas();
+		} else if (command.contentEquals("open")) {
+			menuItem.setCanvas(canvas);
+			menuItem.open();
+		} else if (command.contentEquals("save")) {
+			menuItem.setCanvas(canvas);
+			menuItem.save();
+		} else if (command.contentEquals("saveas")) {
+			menuItem.setCanvas(canvas);
+			menuItem.saveAs();
+		} else if (command.contentEquals("exit")) {
+			menuItem.setCanvas(canvas);
+			menuItem.exit();
+		}
 	}
 	
 	private void closingAction() {
@@ -179,7 +223,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 				JOptionPane.YES_NO_OPTION);
 		
 		if (ans == JOptionPane.YES_OPTION) {
-			System.out.println("Server is closed.");
+			System.out.println("Closed whiteboard.");
 			System.exit(0);
 		}
 	}
