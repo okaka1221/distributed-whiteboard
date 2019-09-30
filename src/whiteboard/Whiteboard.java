@@ -2,15 +2,6 @@ package whiteboard;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class Whiteboard extends JFrame implements ActionListener {
@@ -18,8 +9,8 @@ public class Whiteboard extends JFrame implements ActionListener {
      *
      */
     private static final long serialVersionUID = 1L;
-    private PaintCanvas canvas = null;
-	private MenuItem menuItem = new MenuItem(canvas);	
+    private PaintCanvas canvas;
+	private MenuItem menuItem;	
 	private JToggleButton freedrawButton;
 	private JToggleButton eraseButton;
 	private JToggleButton textButton;
@@ -40,23 +31,11 @@ public class Whiteboard extends JFrame implements ActionListener {
 	private JMenuItem saveMenu;
 	private JMenuItem saveAsMenu;
 	private JMenuItem exitMenu;
-    
-    private Socket socket;
 	
-	public Whiteboard() {
-		try {
-			socket = new Socket("localhost", 8888);
-			canvas = new PaintCanvas(socket);		
-			ClientThForReceiving ctr = new ClientThForReceiving(socket, canvas);
-			ctr.start();
-        } 
-        catch (UnknownHostException e) {
-			e.printStackTrace();
-        } 
-        catch (IOException e) {
-			e.printStackTrace();
-        }
-        
+	public Whiteboard(PaintCanvas canvas) {
+		this.canvas = canvas;
+		this.menuItem = new MenuItem(canvas);
+		
 		//Make the main window
 		setTitle("Distributed Whiteboard");
 		setResizable(false);
@@ -254,47 +233,4 @@ public class Whiteboard extends JFrame implements ActionListener {
 			System.exit(0);
 		}
 	}
-	
-	
-	class ClientThForReceiving extends Thread {
-	    private Socket socket ;
-        private PaintCanvas canvas ;
-        
-	    public ClientThForReceiving(Socket socket, PaintCanvas pcanvas) {
-	        this.socket = socket ;
-	        this.canvas = pcanvas ;
-	    }
-	   
-	    public void run() {
-	        BufferedImage image ; 
-	        PrintWriter pout;
-			try {
-		  	    while(true) {
-                    pout = new PrintWriter(socket.getOutputStream());
-                    pout.print("a");
-                    DataInputStream in = new DataInputStream(socket.getInputStream());
-                    byte[] b = new byte[1024];
-                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                    int length = 0;
-                    while((length=in.read(b)) != -1){
-                        bout.write(b, 0, length);
-                        ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-                        image = ImageIO.read(bin);
-                        System.out.println("----Client Image receiving!!!! image "+image);
-                        if(image != null) {
-                            canvas.setBuffer(image);
-                            canvas.setG2D(image);
-                            //canvas.paint(canvas.getGraphics());
-                            canvas.repaint();
-                        }
-				    }
-				}
-            } 
-            catch (IOException e) {
-				e.printStackTrace();
-			}
-
-	    }
-	}
-	
 }

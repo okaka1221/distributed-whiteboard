@@ -10,6 +10,8 @@ import java.net.Socket;
 
 import javax.imageio.ImageIO;
 
+import client.ClientThForSending;
+
 
 public class PaintCanvas extends Canvas implements MouseListener, MouseMotionListener {
 	/**
@@ -94,12 +96,6 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 				break;
 				
 			case TEXTBOX:
-				/**try {
-					_g2d.setFont(new Font("Serif", Font.PLAIN, 24));
-					_g2d.drawString(textInputDialog.getText(), _endPoint.x, _endPoint.y);
-				} catch (NullPointerException e) {
-					System.out.println(e.getMessage());
-				}**/
 				break;
 				
 			case LINE:
@@ -144,7 +140,7 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 			default:
 				_g2d.drawString("Error", 10, 10);
 		}
-		System.out.println(_isModified);
+		
 		g.drawImage(_buffer, 0, 0, null);
 	}
 	
@@ -237,9 +233,20 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 		if (_type == 2) {
 			//TextInputDialog textInputDialog = new TextInputDialog(this ,e.getPoint());
         }
-        ClientThForSending cts = new ClientThForSending(socket, _buffer);
+		BufferedImage canvasPaint = getBuffer();
+        System.out.println("sent image testing!");
+        DataOutputStream dout;
+		try {
+			dout = new DataOutputStream(socket.getOutputStream());
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ImageIO.write(canvasPaint, "jpg", out);
+			byte[] b = out.toByteArray();
+			dout.write(b);
+        } 
+        catch (IOException e1) {
+			e1.printStackTrace();
+		}
         System.out.println("_buffer "+ _buffer);
-        cts.start();
 		repaint();
 	}
 	
@@ -257,29 +264,5 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 
 	public void mouseExited(MouseEvent e) {	
 		
-	}
-	
-    
-    class ClientThForSending extends Thread  {
-	    private Socket socket ;    
-        public ClientThForSending(Socket socket, BufferedImage bi) {
-            this.socket = socket;
-	    }
-	   
-	    public void run() {
-            BufferedImage canvasPaint = getBuffer();
-	        System.out.println("sent image testing!");
-	        DataOutputStream dout;
-			try {
-				dout = new DataOutputStream(socket.getOutputStream());
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				ImageIO.write(canvasPaint, "jpg", out);
-				byte[] b = out.toByteArray();
-				dout.write(b);
-            } 
-            catch (IOException e) {
-				e.printStackTrace();
-			}
-	    }
 	}
 }
