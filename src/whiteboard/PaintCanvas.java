@@ -3,10 +3,20 @@ package whiteboard;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+import javax.imageio.ImageIO;
+
 
 public class PaintCanvas extends Canvas implements MouseListener, MouseMotionListener {
-	
-	// shape type
+	/**
+     *
+     */
+
+    private static final long serialVersionUID = 1L;
 	public static final int NONE	  = -1;
     public static final int FREEDRAW  = 0;
     public static final int ERASE	  = 1;
@@ -18,32 +28,29 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 	
     // current state
 	private int _type = -1;
-	
 	// position for free draw and eraser 
 	private Point _currPoint = null;
 	private Point _prevPoint = null;
-	
 	// position for drawing shapes
 	private Point _startPoint = null;
 	private Point _endPoint = null;
-	
 	// width and height for shapes
 	private int _shapeWidth = 0;
 	private int _shapeHeight = 0;
-	
 	private BufferedImage _buffer;
 	private Graphics2D _g2d;
-	
 	private BasicStroke _pen = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	private Color _color = Color.BLACK;
 	private boolean _isModified = false;
+	BufferedImage prev;
+	private Socket socket;
 	
-	public PaintCanvas() {
+	public PaintCanvas(Socket socket) {
+		this.socket = socket;
 		setBackground(Color.WHITE);
 		addMouseListener((MouseListener) this);
-		addMouseMotionListener((MouseMotionListener) this);
-        
-		repaint();
+        addMouseMotionListener((MouseMotionListener) this);
+        repaint();
 	}
 	
 	// draw shape or erase according to _type
@@ -54,20 +61,20 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 			int w = getWidth();
 			int h = getHeight();
 			_buffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-	        _g2d = (Graphics2D) _buffer.getGraphics();
+			//blank = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+            //_g2d = (Graphics2D) _buffer.getGraphics();
+            _g2d = (Graphics2D) _buffer.createGraphics();
 	        _g2d.setColor(Color.WHITE);
 	        _g2d.fillRect(0, 0, w, h);
-		} 
-		
+		} 		
 		_g2d.setColor(_color);
 		_g2d.setStroke(_pen);
-		
 		switch(_type) {
-		
-			case NONE:
+            
+            case NONE:
 				break;
-			
-			case FREEDRAW:
+            
+            case FREEDRAW:
 				try {
 					_g2d.drawLine(_prevPoint.x, _prevPoint.y, _currPoint.x, _currPoint.y);
 					_isModified = true;
@@ -87,12 +94,12 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 				break;
 				
 			case TEXTBOX:
-//				try {
-//					_g2d.setFont(new Font("Serif", Font.PLAIN, 24));
-//					_g2d.drawString(textInputDialog.getText(), _endPoint.x, _endPoint.y);
-//				} catch (NullPointerException e) {
-//					System.out.println(e.getMessage());
-//				}
+				/**try {
+					_g2d.setFont(new Font("Serif", Font.PLAIN, 24));
+					_g2d.drawString(textInputDialog.getText(), _endPoint.x, _endPoint.y);
+				} catch (NullPointerException e) {
+					System.out.println(e.getMessage());
+				}**/
 				break;
 				
 			case LINE:
@@ -136,9 +143,7 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 				
 			default:
 				_g2d.drawString("Error", 10, 10);
-				
 		}
-		
 		System.out.println(_isModified);
 		g.drawImage(_buffer, 0, 0, null);
 	}
@@ -168,7 +173,8 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 	}
 	
 	public void setBuffer(BufferedImage img) {
-		_buffer = img;
+        _buffer = img;
+        repaint();
 	}
 	
 	public BufferedImage getBuffer() {
@@ -188,14 +194,15 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 		if (_startPoint.x > _endPoint.x) {
 			_shapeWidth = _startPoint.x - _endPoint.x;
 			_startPoint.x = _endPoint.x;
-		} else {
+        } 
+        else {
 			_shapeWidth = _endPoint.x - _startPoint.x;
 		}
-		
 		if (_startPoint.y > _endPoint.y) {
 			_shapeHeight = _startPoint.y - _endPoint.y;
 			_startPoint.y = _endPoint.y;
-		} else {
+        } 
+        else {
 			_shapeHeight= _endPoint.y - _startPoint.y;
 		}
 	}
@@ -210,55 +217,69 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 		_shapeHeight = 0;
 	}
 
-	@Override
 	public void mouseDragged(MouseEvent e) {
 		_prevPoint = _currPoint;
 		_currPoint = e.getPoint();
 		_endPoint = e.getPoint();
-		
 		if (_type == 0 || _type == 1) {
 			repaint();
 		}
 	}
 
-	@Override
 	public void mousePressed(MouseEvent e) {
 		_currPoint = e.getPoint();
 		_prevPoint = _currPoint;
 		_startPoint = e.getPoint();
 	}
 
-	@Override
 	public void mouseReleased(MouseEvent e) {
 		_endPoint = e.getPoint();
-		
 		if (_type == 2) {
-			TextInputDialog textInputDialog = new TextInputDialog(this ,e.getPoint());
-		}
+			//TextInputDialog textInputDialog = new TextInputDialog(this ,e.getPoint());
+        }
+        ClientThForSending cts = new ClientThForSending(socket, _buffer);
+        System.out.println("_buffer "+ _buffer);
+        cts.start();
 		repaint();
 	}
 	
-	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseExited(MouseEvent e) {	
 		
+	}
+	
+    
+    class ClientThForSending extends Thread  {
+	    private Socket socket ;    
+        public ClientThForSending(Socket socket, BufferedImage bi) {
+            this.socket = socket;
+	    }
+	   
+	    public void run() {
+            BufferedImage canvasPaint = getBuffer();
+	        System.out.println("sent image testing!");
+	        DataOutputStream dout;
+			try {
+				dout = new DataOutputStream(socket.getOutputStream());
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				ImageIO.write(canvasPaint, "jpg", out);
+				byte[] b = out.toByteArray();
+				dout.write(b);
+            } 
+            catch (IOException e) {
+				e.printStackTrace();
+			}
+	    }
 	}
 }
