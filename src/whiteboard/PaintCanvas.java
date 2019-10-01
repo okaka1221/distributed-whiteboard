@@ -3,20 +3,10 @@ package whiteboard;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
-
-import javax.imageio.ImageIO;
 
 public class PaintCanvas extends Canvas implements MouseListener, MouseMotionListener {
-	/**
-     *
-     */
-
-    private static final long serialVersionUID = 1L;
+	
+	// shape type
 	public static final int NONE	  = -1;
     public static final int FREEDRAW  = 0;
     public static final int ERASE	  = 1;
@@ -28,30 +18,32 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 	
     // current state
 	private int _type = -1;
+	
 	// position for free draw and eraser 
 	private Point _currPoint = null;
 	private Point _prevPoint = null;
+	
 	// position for drawing shapes
 	private Point _startPoint = null;
 	private Point _endPoint = null;
+	
 	// width and height for shapes
 	private int _shapeWidth = 0;
 	private int _shapeHeight = 0;
+	
 	private BufferedImage _buffer;
 	private Graphics2D _g2d;
+	
 	private BasicStroke _pen = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	private Color _color = Color.BLACK;
 	private boolean _isModified = false;
-	BufferedImage prev;
-	private Socket socket;
-	private Boolean isSend = false;
 	
-	public PaintCanvas(Socket socket) {
-		this.socket = socket;
+	public PaintCanvas() {
 		setBackground(Color.WHITE);
 		addMouseListener((MouseListener) this);
-        addMouseMotionListener((MouseMotionListener) this);
-        repaint();
+		addMouseMotionListener((MouseMotionListener) this);
+        
+		repaint();
 	}
 	
 	// draw shape or erase according to _type
@@ -62,20 +54,20 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 			int w = getWidth();
 			int h = getHeight();
 			_buffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-			//blank = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-            //_g2d = (Graphics2D) _buffer.getGraphics();
-            _g2d = (Graphics2D) _buffer.createGraphics();
+	        _g2d = (Graphics2D) _buffer.getGraphics();
 	        _g2d.setColor(Color.WHITE);
 	        _g2d.fillRect(0, 0, w, h);
-		} 		
+		} 
+		
 		_g2d.setColor(_color);
 		_g2d.setStroke(_pen);
+		
 		switch(_type) {
-            
-            case NONE:
+		
+			case NONE:
 				break;
-            
-            case FREEDRAW:
+			
+			case FREEDRAW:
 				try {
 					_g2d.drawLine(_prevPoint.x, _prevPoint.y, _currPoint.x, _currPoint.y);
 					_isModified = true;
@@ -95,6 +87,12 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 				break;
 				
 			case TEXTBOX:
+//				try {
+//					_g2d.setFont(new Font("Serif", Font.PLAIN, 24));
+//					_g2d.drawString(textInputDialog.getText(), _endPoint.x, _endPoint.y);
+//				} catch (NullPointerException e) {
+//					System.out.println(e.getMessage());
+//				}
 				break;
 				
 			case LINE:
@@ -138,14 +136,11 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 				
 			default:
 				_g2d.drawString("Error", 10, 10);
+				
 		}
 		
+		System.out.println(_isModified);
 		g.drawImage(_buffer, 0, 0, null);
-		
-		if (isSend) {
-			sendBufferImage();
-			isSend = false;
-		}
 	}
 	
 	public boolean getIsModified() {
@@ -173,8 +168,7 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 	}
 	
 	public void setBuffer(BufferedImage img) {
-        _buffer = img;
-        repaint();
+		_buffer = img;
 	}
 	
 	public BufferedImage getBuffer() {
@@ -186,7 +180,7 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 	}
 	
 	public void setG2D(BufferedImage img) {
-		_g2d = (Graphics2D) img.createGraphics();
+		_g2d = (Graphics2D) img.getGraphics();
 	}
 	
 	// set width and height of shape
@@ -194,15 +188,14 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 		if (_startPoint.x > _endPoint.x) {
 			_shapeWidth = _startPoint.x - _endPoint.x;
 			_startPoint.x = _endPoint.x;
-        } 
-        else {
+		} else {
 			_shapeWidth = _endPoint.x - _startPoint.x;
 		}
+		
 		if (_startPoint.y > _endPoint.y) {
 			_shapeHeight = _startPoint.y - _endPoint.y;
 			_startPoint.y = _endPoint.y;
-        } 
-        else {
+		} else {
 			_shapeHeight= _endPoint.y - _startPoint.y;
 		}
 	}
@@ -216,64 +209,56 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 		_shapeWidth = 0;
 		_shapeHeight = 0;
 	}
-	
-	public void sendBufferImage() {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ImageIO.write(_buffer, "jpg", baos);
-			baos.flush();
-			baos.close();
-			byte[] byteImage = baos.toByteArray();
-			
-			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-			dos.writeInt(byteImage.length);
-			dos.write(byteImage);
-			dos.flush();
-        } 
-        catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		
-	}
 
+	@Override
 	public void mouseDragged(MouseEvent e) {
 		_prevPoint = _currPoint;
 		_currPoint = e.getPoint();
 		_endPoint = e.getPoint();
+		
 		if (_type == 0 || _type == 1) {
 			repaint();
 		}
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 		_currPoint = e.getPoint();
 		_prevPoint = _currPoint;
 		_startPoint = e.getPoint();
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
-		isSend = true;
 		_endPoint = e.getPoint();
-		repaint();
 		
 		if (_type == 2) {
 			TextInputDialog textInputDialog = new TextInputDialog(this ,e.getPoint());
-        }
+		}
+		repaint();
 	}
 	
+	@Override
 	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 
-	public void mouseExited(MouseEvent e) {	
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 }
