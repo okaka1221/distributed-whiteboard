@@ -1,15 +1,20 @@
 package whiteboard;
 
 import java.awt.*;
+
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
+import org.json.*;
+
+import java.util.Base64;
 
 public class PaintCanvas extends Canvas implements MouseListener, MouseMotionListener {
 	/**
@@ -43,8 +48,9 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 	private Color _color = Color.BLACK;
 	private boolean _isModified = false;
 	BufferedImage prev;
-	private Socket socket;
 	private Boolean isSend = false;
+	
+	private Socket socket;
 	
 	public PaintCanvas(Socket socket) {
 		this.socket = socket;
@@ -108,7 +114,7 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 				
 			case CIRCLE:
 				try {
-					setShapeSize();
+//					setShapeSize();
 					_g2d.drawOval(_startPoint.x, _startPoint.y, _shapeWidth, _shapeWidth);
 					_isModified = true;
 				} catch (NullPointerException e) {
@@ -118,7 +124,7 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 				
 			case RECTANGLE:
 				try {
-					setShapeSize();
+//					setShapeSize();
 					_g2d.drawRect(_startPoint.x, _startPoint.y, _shapeWidth, _shapeHeight);
 					_isModified = true;
 				} catch (NullPointerException e) {
@@ -128,7 +134,7 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 			
 			case OVAL:
 				try {
-					setShapeSize();
+//					setShapeSize();
 					_g2d.drawOval(_startPoint.x, _startPoint.y, _shapeWidth, _shapeHeight);
 					_isModified = true;
 				} catch (NullPointerException e) {
@@ -221,14 +227,16 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(_buffer, "jpg", baos);
-			baos.flush();
-			baos.close();
-			byte[] byteImage = baos.toByteArray();
+			byte[] imageBytes = baos.toByteArray();
+			String encodedImage = Base64.getEncoder().encodeToString(imageBytes);
 			
-			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-			dos.writeInt(byteImage.length);
-			dos.write(byteImage);
-			dos.flush();
+			JSONObject json = new JSONObject();
+			json.put("header", "canvas");
+			json.put("body", encodedImage);
+			
+			OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+			writer.write(json.toString() + "\n");
+			writer.flush();
         } 
         catch (IOException e1) {
 			e1.printStackTrace();
@@ -258,6 +266,8 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 		
 		if (_type == 2) {
 			TextInputDialog textInputDialog = new TextInputDialog(this ,e.getPoint());
+        } else if (_type == 4 || _type == 5 || _type == 6) {
+        	setShapeSize();
         }
 	}
 	

@@ -32,7 +32,10 @@ public class Whiteboard extends JFrame implements ActionListener {
 	private JMenuItem saveAsMenu;
 	private JMenuItem exitMenu;
 	
-	public Whiteboard(PaintCanvas canvas) {
+	private ChatBox chatbox;
+	
+	public Whiteboard(PaintCanvas canvas, ChatBox chatbox) {
+		this.chatbox = chatbox;
 		this.canvas = canvas;
 		this.menuItem = new MenuItem(canvas);
 		
@@ -202,7 +205,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 		} else if (command.contentEquals("oval")) {
 			canvas.setType(6);
 		} else if (command.contentEquals("chat")) {
-			//new ChatBox();
+			chatbox.setVisible(true);
 		} else if (command.contentEquals("new")) {
 			menuItem.setCanvas(canvas);
 			menuItem.newCanvas();

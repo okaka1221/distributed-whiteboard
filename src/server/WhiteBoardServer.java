@@ -7,22 +7,25 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.json.JSONObject;
+
 import java.awt.image.BufferedImage;
 import java.io.*;
  
-public class WhiteBoardServer extends Thread
-{
-	private List<Socket> sockets = new ArrayList<Socket>() ; 
-   public WhiteBoardServer() throws IOException, SQLException, ClassNotFoundException, Exception
-   {
-        ServerSocket ss = new ServerSocket(8000) ;
-        System.out.println("WhiteBoard Server started!") ;
-        while(true) {
-            Socket socket = ss.accept() ;
-            sockets.add(socket) ;
-            InetAddress ip = socket.getInetAddress();
-            System.out.println("New Client connected! IP is"+ip) ;
-            Thread thread = new Thread(new ServerRunner(socket)) ;
+public class WhiteBoardServer extends Thread {
+	private List<Socket> sockets = new ArrayList<Socket>();
+	private JSONObject canvasJson = new JSONObject();
+	private JSONObject chatboxJson = new JSONObject();
+	
+	public WhiteBoardServer() throws IOException, SQLException, ClassNotFoundException, Exception {
+		ServerSocket ss = new ServerSocket(8000) ;
+		System.out.println("WhiteBoard Server started!") ;
+		while(true) {
+		    Socket socket = ss.accept() ;
+		    sockets.add(socket) ;
+		    InetAddress ip = socket.getInetAddress();
+		    System.out.println("New Client connected! IP is"+ip) ;
+            Thread thread = new Thread(new ServerRunner(this, socket));
             thread.start();
         }
    }
@@ -40,41 +43,20 @@ public class WhiteBoardServer extends Thread
 	   return this.sockets;
    }
    
-   public class ServerRunner implements Runnable  {
-	    private List<Socket> sockets ;
-	    private Socket currentSocket ;  
-	   
-	    public ServerRunner (Socket currentSocket)  {
-	        this.currentSocket = currentSocket ;
-	    }
-	   
-	    public void run()  {
-			try {
-				while(true) {
-					DataInputStream dis = new DataInputStream(currentSocket.getInputStream());
-					int length = dis.readInt();
-					
-					if (length > 0) {
-						byte[] inImage = new byte[length];
-						dis.read(inImage);
-						
-						if (inImage.length > 0) {
-							this.sockets = getSocketList();
-							for (Socket s: sockets) {
-								
-								DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-								dos.writeInt(inImage.length);
-								dos.write(inImage);
-								dos.flush();
-							}
-						}
-					}
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    }
+   public JSONObject getCanvasJson() {
+		return this.canvasJson;
+	}
+	
+	public void setCanvasJson(JSONObject json) {
+		this.canvasJson = json;
+	}
+	
+	public JSONObject getChatboxJson() {
+		return this.chatboxJson;
+	}
+	
+	public void setChatboxJson(JSONObject json) {
+		this.chatboxJson = json;
 	}
 }
 
