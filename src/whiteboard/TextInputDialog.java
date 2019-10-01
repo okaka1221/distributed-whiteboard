@@ -58,6 +58,7 @@ public class TextInputDialog extends JDialog implements ActionListener {
 			_g2d.drawString(text, inputPoint.x, inputPoint.y);
 			parentCanvas.repaint();
 			parentCanvas.setIsModified(true);
+			parentCanvas.sendBufferImage();
 		} catch (NullPointerException e1) {
 			System.out.println(e1.getMessage());
 		}

@@ -6,12 +6,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
-
-import client.ClientThForSending;
-
 
 public class PaintCanvas extends Canvas implements MouseListener, MouseMotionListener {
 	/**
@@ -46,6 +44,7 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 	private boolean _isModified = false;
 	BufferedImage prev;
 	private Socket socket;
+	private Boolean isSend = false;
 	
 	public PaintCanvas(Socket socket) {
 		this.socket = socket;
@@ -142,6 +141,11 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 		}
 		
 		g.drawImage(_buffer, 0, 0, null);
+		
+		if (isSend) {
+			sendBufferImage();
+			isSend = false;
+		}
 	}
 	
 	public boolean getIsModified() {
@@ -182,7 +186,7 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 	}
 	
 	public void setG2D(BufferedImage img) {
-		_g2d = (Graphics2D) img.getGraphics();
+		_g2d = (Graphics2D) img.createGraphics();
 	}
 	
 	// set width and height of shape
@@ -212,6 +216,22 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 		_shapeWidth = 0;
 		_shapeHeight = 0;
 	}
+	
+	public void sendBufferImage() {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(_buffer, "jpg", baos);
+			byte[] byteImage = baos.toByteArray();
+			
+			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+			dos.writeInt(byteImage.length);
+			dos.write(byteImage);
+        } 
+        catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+	}
 
 	public void mouseDragged(MouseEvent e) {
 		_prevPoint = _currPoint;
@@ -229,25 +249,13 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 	}
 
 	public void mouseReleased(MouseEvent e) {
+		isSend = true;
 		_endPoint = e.getPoint();
-		if (_type == 2) {
-			//TextInputDialog textInputDialog = new TextInputDialog(this ,e.getPoint());
-        }
-		BufferedImage canvasPaint = getBuffer();
-        System.out.println("sent image testing!");
-        DataOutputStream dout;
-		try {
-			dout = new DataOutputStream(socket.getOutputStream());
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			ImageIO.write(canvasPaint, "jpg", out);
-			byte[] b = out.toByteArray();
-			dout.write(b);
-        } 
-        catch (IOException e1) {
-			e1.printStackTrace();
-		}
-        System.out.println("_buffer "+ _buffer);
 		repaint();
+		
+		if (_type == 2) {
+			TextInputDialog textInputDialog = new TextInputDialog(this ,e.getPoint());
+        }
 	}
 	
 	public void mouseMoved(MouseEvent e) {

@@ -1,10 +1,12 @@
 package client;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -21,32 +23,25 @@ public class ClientThForReceiving extends Thread {
         this.canvas = canvas ;
     }
    
-    public void run() {
-        BufferedImage image ; 
-        PrintWriter pout;
+    public void run()  {
 		try {
-	  	    while(true) {
-                pout = new PrintWriter(socket.getOutputStream());
-                pout.print("a");
-                DataInputStream in = new DataInputStream(socket.getInputStream());
-                byte[] b = new byte[1024];
-                ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                int length = 0;
-                while((length=in.read(b)) != -1){
-                    bout.write(b, 0, length);
-                    ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-                    image = ImageIO.read(bin);
-                    System.out.println("----Client Image receiving!!!! image "+image);
-                    if(image != null) {
-                        canvas.setBuffer(image);
-                        canvas.setG2D(image);
-                        //canvas.paint(canvas.getGraphics());
-                        canvas.repaint();
-                    }
-			    }
+			while(true) {
+				DataInputStream dis = new DataInputStream(socket.getInputStream());
+				int length = dis.readInt();
+				
+				if (length > 0) {
+					byte[] byteImage = new byte[length];
+					dis.read(byteImage);
+					ByteArrayInputStream bais = new ByteArrayInputStream(byteImage);
+					BufferedImage image = ImageIO.read(bais);
+					if (image != null) {
+						canvas.setG2D(image);
+						canvas.setBuffer(image);
+					}
+				}
 			}
-        } 
-        catch (IOException e) {
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
