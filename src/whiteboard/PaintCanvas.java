@@ -221,11 +221,14 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(_buffer, "jpg", baos);
+			baos.flush();
+			baos.close();
 			byte[] byteImage = baos.toByteArray();
 			
 			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
 			dos.writeInt(byteImage.length);
 			dos.write(byteImage);
+			dos.flush();
         } 
         catch (IOException e1) {
 			e1.printStackTrace();

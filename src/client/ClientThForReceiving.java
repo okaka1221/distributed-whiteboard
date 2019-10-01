@@ -25,8 +25,8 @@ public class ClientThForReceiving extends Thread {
    
     public void run()  {
 		try {
+			DataInputStream dis = new DataInputStream(socket.getInputStream());
 			while(true) {
-				DataInputStream dis = new DataInputStream(socket.getInputStream());
 				int length = dis.readInt();
 				
 				if (length > 0) {

@@ -65,6 +65,7 @@ public class WhiteBoardServer extends Thread
 								DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 								dos.writeInt(inImage.length);
 								dos.write(inImage);
+								dos.flush();
 							}
 						}
 					}
