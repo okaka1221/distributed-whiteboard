@@ -5,12 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,7 +20,11 @@ import javax.swing.JOptionPane;
 
 public class ChatBox extends JFrame {
 
-	private Socket socket;
+	/**
+     *
+     */
+    private static final long serialVersionUID = -2619377735582365735L;
+    private Socket socket;
 	private JTextArea inputArea;
 	private JTextArea contentArea;
 	String input = null;

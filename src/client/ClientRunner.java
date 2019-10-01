@@ -1,15 +1,11 @@
 package client;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Base64;
 
@@ -21,25 +17,25 @@ import org.json.JSONObject;
 import whiteboard.PaintCanvas;
 
 public class ClientRunner extends Thread {
-    private Socket socket ;
+    private Socket socket;
     private PaintCanvas canvas;
     private JTextArea contentArea;
+    private boolean manager;
     
-    public ClientRunner(Socket socket, PaintCanvas canvas, JTextArea  conteArea) {
+    public ClientRunner(Socket socket, PaintCanvas canvas, JTextArea  conteArea, boolean manager) {
         this.socket = socket;
         this.canvas = canvas;
         this.contentArea = conteArea;
+        this.manager = manager;
     }
    
     public void run()  {
 		try {
 			InputStream is = socket.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-			
 			String line;
 			while ((line = reader.readLine()) != null) {
 				JSONObject json = new JSONObject(line);
-				
 				if (json.getString("header").equals("canvas")) {
 					String encodedImage = json.getString("body");
 					
@@ -64,7 +60,6 @@ public class ClientRunner extends Thread {
 				
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
