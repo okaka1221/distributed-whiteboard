@@ -6,11 +6,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class TextInputDialog extends JDialog implements ActionListener {
-	/**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-    private JPanel textPanel;
+	private JPanel textPanel;
     private JPanel buttonPanel;
     private JTextField textField;
     private JButton button;
@@ -50,6 +46,7 @@ public class TextInputDialog extends JDialog implements ActionListener {
 	    setVisible(true);
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		text = textField.getText().toString();
 		try {
@@ -58,7 +55,6 @@ public class TextInputDialog extends JDialog implements ActionListener {
 			_g2d.drawString(text, inputPoint.x, inputPoint.y);
 			parentCanvas.repaint();
 			parentCanvas.setIsModified(true);
-			parentCanvas.sendBufferImage();
 		} catch (NullPointerException e1) {
 			System.out.println(e1.getMessage());
 		}

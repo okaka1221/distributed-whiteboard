@@ -2,15 +2,14 @@ package whiteboard;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
+import javax.swing.border.BevelBorder; 
 
 public class Whiteboard extends JFrame implements ActionListener {
-	/**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-    private PaintCanvas canvas;
-	private MenuItem menuItem;	
+	private PaintCanvas canvas = new PaintCanvas();;
+	private MenuItem menuItem = new MenuItem(canvas);
+	
 	private JToggleButton freedrawButton;
 	private JToggleButton eraseButton;
 	private JToggleButton textButton;
@@ -18,13 +17,17 @@ public class Whiteboard extends JFrame implements ActionListener {
 	private JToggleButton circleButton;
 	private JToggleButton rectangleButton;
 	private JToggleButton ovalButton;
+	
 	private JLabel sizeLabel;
 	private JLabel colorLabel;
+	
 	private int _size = 2;
 	private Color _color = Color.BLACK;
+	
 	private JComboBox<String> sizeCombo;
 	private JButton colorButton;
 	private JButton chatButton;
+	
 	JMenuBar menu;
 	private JMenuItem newMenu;
 	private JMenuItem openMenu;
@@ -32,34 +35,27 @@ public class Whiteboard extends JFrame implements ActionListener {
 	private JMenuItem saveAsMenu;
 	private JMenuItem exitMenu;
 	
-	public Whiteboard(PaintCanvas canvas) {
-		this.canvas = canvas;
-		this.menuItem = new MenuItem(canvas);
-		
-		//Make the main window
+	
+	public Whiteboard() {
 		setTitle("Distributed Whiteboard");
 		setResizable(false);
 		setSize(800, 600);
 		
-        //Make a divider to seperate drawing space
-        JSplitPane splitPane = new JSplitPane();
+		JSplitPane splitPane = new JSplitPane();
 		splitPane.setDividerSize(0);
 		getContentPane().add(splitPane);
-        
-        //Make the canvas
+		
 		Container drawContainer = new Container();
 		drawContainer.setBackground(Color.WHITE);
 		splitPane.setRightComponent(drawContainer);
+		
 		canvas.setBounds(10, 10, 615, 535);
 		drawContainer.add(canvas);
-        
-        //Add the tools
+		
 		JPanel toolsPanel = new JPanel();
 		toolsPanel.setLayout(new GridLayout(12, 1));
 		splitPane.setLeftComponent(toolsPanel);
-        
-
-        //Make the buttons and functional elements
+		
 		freedrawButton = new JToggleButton("Freedraw");
 		freedrawButton.setActionCommand("freedraw");
 		freedrawButton.addActionListener(this);
@@ -79,6 +75,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 		toolsPanel.add(sizeCombo);
 		
 		sizeCombo.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent e) {
 				_size = Integer.parseInt(sizeCombo.getSelectedItem().toString());
 				canvas.setPenSize(_size);
@@ -134,13 +131,10 @@ public class Whiteboard extends JFrame implements ActionListener {
 		group.add(circleButton);
 		group.add(rectangleButton);
 		group.add(ovalButton);
-        
-        //Adding the menu bar
+		
 		menu = new JMenuBar();
 		setJMenuBar(menu);
-        
-
-        //Adding menu components
+		
 		newMenu = new JMenuItem("New");
 		newMenu.setActionCommand("new");
 		newMenu.addActionListener(this);
@@ -165,9 +159,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 		exitMenu.setActionCommand("exit");
 		exitMenu.addActionListener(this);
 		menu.add(exitMenu);
-        
-
-        //Set a custom close
+		
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
         	@Override
@@ -176,11 +168,11 @@ public class Whiteboard extends JFrame implements ActionListener {
     		}
 		});
 	}
-    
-    
-    //set a value for each action performed to the PaintCanvas class
+	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
+		
 		if (command.equals("freedraw")) {
 			canvas.setType(0);
 		} else if (command.contentEquals("erase")) {
@@ -191,6 +183,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 			_color = selectedColor;
 			colorLabel.setBackground(_color);
 			canvas.setColor(_color);
+			
 		} else if (command.contentEquals("textbox")) {
 			canvas.setType(2);
 		} else if (command.contentEquals("line")) {
@@ -202,7 +195,8 @@ public class Whiteboard extends JFrame implements ActionListener {
 		} else if (command.contentEquals("oval")) {
 			canvas.setType(6);
 		} else if (command.contentEquals("chat")) {
-			//new ChatBox();
+			// TODO: ADD chat windpw
+			
 		} else if (command.contentEquals("new")) {
 			menuItem.setCanvas(canvas);
 			menuItem.newCanvas();
