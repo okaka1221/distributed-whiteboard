@@ -139,12 +139,11 @@ public class Whiteboard extends JFrame implements ActionListener {
 		group.add(ovalButton);
         
 		if (manager) {
-	        //Adding the menu bar
+	        //Adding the menu bar (NOT AVAILABLE TO NON MANAGING CLIENTS)
 			menu = new JMenuBar();
 			setJMenuBar(menu);
 	        
-	
-	        //Adding menu components
+	        //Adding menu bar components
 			newMenu = new JMenuItem("New");
 			newMenu.setActionCommand("new");
 			newMenu.addActionListener(this);
@@ -185,7 +184,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 	}
     
     
-    //set a value for each action performed to the PaintCanvas class
+    //set a function for each action performed to the PaintCanvas class
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if (command.equals("freedraw")) {
@@ -249,7 +248,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 		
 		if (ans == JOptionPane.YES_OPTION) {
 			System.out.println("Client disconnected.");
-			setVisible(false);
+			dispose();
 		}
 	}
 }

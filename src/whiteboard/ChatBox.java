@@ -30,12 +30,16 @@ public class ChatBox extends JFrame {
 	String input = null;
 	private static String name;
 
-	public ChatBox(Socket socket, JTextArea contentArea) {
+	public ChatBox(Socket socket, JTextArea contentArea, String USERNAME) {
 		this.socket = socket;
 		this.contentArea = contentArea;
-		
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		name = JOptionPane.showInputDialog("Please input your name.");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		//If the user executes without using arguments
+		if (USERNAME == "#TESTMANAGER#" || USERNAME == "#TESTCIENT#") {
+			name = JOptionPane.showInputDialog("Please input your name.");
+		}
+		else 
+			name = USERNAME;
 		this.setBounds(100, 100, 450, 300);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -44,7 +48,7 @@ public class ChatBox extends JFrame {
 		gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 1.0, 0.0, 1.0, Double.MIN_VALUE };
 		this.getContentPane().setLayout(gridBagLayout);
-
+		
 		
 		GridBagConstraints gbc_textArea = new GridBagConstraints();
 		gbc_textArea.gridwidth = 2;

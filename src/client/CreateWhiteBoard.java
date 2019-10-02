@@ -14,18 +14,33 @@ public class CreateWhiteBoard {
 	private PaintCanvas canvas;
 	private JTextArea contentArea;
 	DataOutputStream dos;
+	private String HOST, USERNAME;
+	private int PORT;
 	
 	private CreateWhiteBoard() {
+		HOST = "localhost";
+		PORT = 8000;
+		USERNAME = "#TESTMANAGER#";
+		new CreateWhiteBoard(HOST, PORT, USERNAME);
+	}
+	
+	private CreateWhiteBoard(String HOST, int PORT, String USERNAME) {
 		try {
-			socket = new Socket("localhost", 8000);
+			this.HOST = HOST;
+			this.PORT = PORT;
+			this.USERNAME = USERNAME;
+			socket = new Socket(HOST, PORT);
 			canvas = new PaintCanvas(socket);
 			contentArea = new JTextArea();
 			dos = new DataOutputStream(socket.getOutputStream());
 			dos.writeBoolean(true);
-			ChatBox chatbox = new ChatBox(socket, contentArea);
+			dos.flush();
+			dos.writeUTF(USERNAME);
+			dos.flush();
+			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
 			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, true);
 			whiteboard.setVisible(true);
-			Thread thread = new Thread(new ClientRunner(socket, canvas, contentArea, true));
+			Thread thread = new Thread(new ClientRunner(socket, canvas, contentArea));
 			thread.start();
         } 
         catch (UnknownHostException e) {
@@ -37,8 +52,13 @@ public class CreateWhiteBoard {
 	}
 	
 	public static void main(String args[])  {
-        try {
-            new CreateWhiteBoard() ;
+		try {
+			if (args.length == 0)
+				new CreateWhiteBoard();
+			else if (args.length == 3)
+				new CreateWhiteBoard(args[0], Integer.parseInt(args[1]), args[2]);
+			else
+				throw new IOException("Illegal arguements!!!!");
         } 
         catch(Exception e)  {
             e.printStackTrace();

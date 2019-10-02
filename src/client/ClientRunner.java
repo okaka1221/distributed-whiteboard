@@ -20,13 +20,11 @@ public class ClientRunner extends Thread {
     private Socket socket;
     private PaintCanvas canvas;
     private JTextArea contentArea;
-    private boolean manager;
     
-    public ClientRunner(Socket socket, PaintCanvas canvas, JTextArea  conteArea, boolean manager) {
+    public ClientRunner(Socket socket, PaintCanvas canvas, JTextArea  conteArea) {
         this.socket = socket;
         this.canvas = canvas;
         this.contentArea = conteArea;
-        this.manager = manager;
     }
    
     public void run()  {

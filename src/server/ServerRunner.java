@@ -43,10 +43,8 @@ public class ServerRunner implements Runnable  {
 				writer.flush();
 	    	}
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
@@ -76,7 +74,6 @@ public class ServerRunner implements Runnable  {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

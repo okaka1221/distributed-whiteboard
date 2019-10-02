@@ -26,6 +26,8 @@ public class WhiteBoardServer extends Thread {
 		    dis = new DataInputStream(socket.getInputStream());
 		    boolean manager = dis.readBoolean();
 		    System.out.println(manager);
+		    String username = dis.readUTF();
+		    System.out.println(username);
 		    InetAddress ip = socket.getInetAddress();
 		    if ((manager) && (managerCount == 0)) {
 		    	managerCount++;
