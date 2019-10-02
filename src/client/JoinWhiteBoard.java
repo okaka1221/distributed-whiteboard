@@ -55,7 +55,7 @@ public class JoinWhiteBoard {
         	else if (args.length == 3)
         		new JoinWhiteBoard(args[0], Integer.parseInt(args[1]), args[2]);
         	else
-        		throw new IOException("Illegal arguements!!!!");
+        		throw new IOException("Illegal arguments!!!!");
         } 
         catch(Exception e)  {
             e.printStackTrace();
