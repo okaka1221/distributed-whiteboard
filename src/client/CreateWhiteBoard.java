@@ -35,8 +35,6 @@ public class CreateWhiteBoard {
 			dos = new DataOutputStream(socket.getOutputStream());
 			dos.writeBoolean(true);
 			dos.flush();
-			dos.writeUTF(USERNAME);
-			dos.flush();
 			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
 			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, true);
 			whiteboard.setVisible(true);

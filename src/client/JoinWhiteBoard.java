@@ -31,8 +31,6 @@ public class JoinWhiteBoard {
 			dos = new DataOutputStream(socket.getOutputStream());
 			dos.writeBoolean(false);
 			dos.flush();
-			dos.writeUTF(USERNAME);
-			dos.flush();
 			contentArea = new JTextArea();
 			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
 			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, false);
