@@ -1,15 +1,11 @@
 package client;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Base64;
 
@@ -19,6 +15,8 @@ import javax.swing.JTextArea;
 import org.json.JSONObject;
 
 import whiteboard.PaintCanvas;
+
+
 
 public class ClientRunner extends Thread {
     private Socket socket ;

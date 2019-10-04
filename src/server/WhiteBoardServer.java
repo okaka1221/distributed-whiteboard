@@ -2,31 +2,34 @@ package server;
 
 import java.net.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.imageio.ImageIO;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
  
 public class WhiteBoardServer extends Thread {
-	private List<Socket> sockets = new ArrayList<Socket>();
+	private Map<String,Socket> sockets = new HashMap<String,Socket>();//Connections of all clients.
 	private JSONObject canvasJson = new JSONObject();
 	private JSONObject chatboxJson = new JSONObject();
+	private String manager = null;
 	
 	public WhiteBoardServer() throws IOException, SQLException, ClassNotFoundException, Exception {
 		ServerSocket ss = new ServerSocket(8000) ;
 		System.out.println("WhiteBoard Server started!") ;
+		
 		while(true) {
 		    Socket socket = ss.accept() ;
-		    sockets.add(socket) ;
-		    InetAddress ip = socket.getInetAddress();
-		    System.out.println("New Client connected! IP is"+ip) ;
-            Thread thread = new Thread(new ServerRunner(this, socket));
+		    ServerRunner sr = new ServerRunner(this, socket);
+		    Thread thread = new Thread(sr);
             thread.start();
+           
+            if(sr.getOp() != null) {
+            	sockets.put(sr.getName(), socket);
+            }
+		    InetAddress ip = socket.getInetAddress();
+            
         }
    }
    
@@ -39,10 +42,15 @@ public class WhiteBoardServer extends Thread {
        }
    }
    
-   public List<Socket> getSocketList() {
-	   return this.sockets;
-   }
-   
+   public Map<String, Socket> getSockets() {
+		return sockets;
+	}
+
+	public void setSockets(Map<String, Socket> sockets) {
+		this.sockets = sockets;
+	}
+
+  
    public JSONObject getCanvasJson() {
 		return this.canvasJson;
 	}
@@ -57,6 +65,14 @@ public class WhiteBoardServer extends Thread {
 	
 	public void setChatboxJson(JSONObject json) {
 		this.chatboxJson = json;
+	}
+
+	public String getManager() {
+		return manager;
+	}
+
+	public void setManager(String manager) {
+		this.manager = manager;
 	}
 }
 

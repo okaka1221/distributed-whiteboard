@@ -1,6 +1,8 @@
 package client;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -8,15 +10,16 @@ import javax.swing.JTextArea;
 
 import org.json.JSONObject;
 
-import server.ServerRunner;
 import whiteboard.ChatBox;
 import whiteboard.PaintCanvas;
 import whiteboard.Whiteboard;
+
 
 public class WhiteBoardClient {
 	private Socket socket;
 	private PaintCanvas canvas;
 	private JTextArea contentArea;
+	private String clientName;
 	
 	private WhiteBoardClient() {
 		try {
@@ -24,7 +27,9 @@ public class WhiteBoardClient {
 			canvas = new PaintCanvas(socket);
 			contentArea = new JTextArea();
 			ChatBox chatbox = new ChatBox(socket, contentArea);
-			Whiteboard whiteboard = new Whiteboard(canvas, chatbox);
+			
+			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, socket);
+			
 			whiteboard.setVisible(true);
 			Thread thread = new Thread(new ClientRunner(socket, canvas, contentArea));
 			thread.start();

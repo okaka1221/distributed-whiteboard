@@ -2,7 +2,15 @@ package whiteboard;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.swing.*;
+
+import org.json.simple.JSONObject;
 
 public class Whiteboard extends JFrame implements ActionListener {
 	/**
@@ -31,13 +39,18 @@ public class Whiteboard extends JFrame implements ActionListener {
 	private JMenuItem saveMenu;
 	private JMenuItem saveAsMenu;
 	private JMenuItem exitMenu;
+	private String name;
+	private Socket socket;
 	
 	private ChatBox chatbox;
 	
-	public Whiteboard(PaintCanvas canvas, ChatBox chatbox) {
+	public Whiteboard(PaintCanvas canvas, ChatBox chatbox, Socket socket) {
 		this.chatbox = chatbox;
 		this.canvas = canvas;
 		this.menuItem = new MenuItem(canvas);
+		this.socket = socket;
+		this.name = chatbox.getName();
+		sendName(name,"client");
 		
 		//Make the main window
 		setTitle("Distributed Whiteboard");
@@ -232,8 +245,29 @@ public class Whiteboard extends JFrame implements ActionListener {
 				JOptionPane.YES_NO_OPTION);
 		
 		if (ans == JOptionPane.YES_OPTION) {
+			//Send this client's name to server when he/she closed the whiteboard window.
+			sendName(name,"close");
 			System.out.println("Closed whiteboard.");
 			System.exit(0);
 		}
+	}
+	
+	private void sendName(String name, String op) {
+		if (name.length() == 0) {
+			return;
+		}
+        
+        try  {
+        	JSONObject json = new JSONObject();
+			json.put("header", name);
+			json.put("body", op);
+			System.out.println("json "+json);
+			OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+			writer.write(json.toString() + "\n");
+			writer.flush();
+		//	writer.close();
+        }catch(Exception e1)  {
+            e1.printStackTrace();
+        }
 	}
 }
