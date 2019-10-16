@@ -31,9 +31,11 @@ public class ClientRunner extends Thread {
 		try {
 			InputStream is = socket.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			
 			String line;
 			while ((line = reader.readLine()) != null) {
 				JSONObject json = new JSONObject(line);
+				
 				if (json.getString("header").equals("canvas")) {
 					String encodedImage = json.getString("body");
 					
@@ -46,7 +48,7 @@ public class ClientRunner extends Thread {
 							canvas.setBuffer(image);
 						}
 					}
-				} if (json.getString("header").equals("chatbox")) {
+				} else if (json.getString("header").equals("chatbox")) {
 					String message = json.getString("body");
 					System.out.println(message.length());
 					if (message.length() > 0) {

@@ -2,9 +2,13 @@ package client;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import javax.swing.JTextArea;
+
+import org.json.JSONObject;
+
 import whiteboard.ChatBox;
 import whiteboard.PaintCanvas;
 import whiteboard.Whiteboard;
@@ -13,7 +17,7 @@ public class CreateWhiteBoard {
 	private Socket socket;
 	private PaintCanvas canvas;
 	private JTextArea contentArea;
-	DataOutputStream dos;
+	private DataOutputStream dos;
 	private String HOST, USERNAME;
 	private int PORT;
 	
@@ -29,15 +33,21 @@ public class CreateWhiteBoard {
 			this.HOST = HOST;
 			this.PORT = PORT;
 			this.USERNAME = USERNAME;
+			
 			socket = new Socket(HOST, PORT);
 			canvas = new PaintCanvas(socket);
 			contentArea = new JTextArea();
+			
 			dos = new DataOutputStream(socket.getOutputStream());
 			dos.writeBoolean(true);
+			dos.writeChars(USERNAME);
 			dos.flush();
+			
 			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
+			
 			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, true);
 			whiteboard.setVisible(true);
+			
 			Thread thread = new Thread(new ClientRunner(socket, canvas, contentArea));
 			thread.start();
         } 

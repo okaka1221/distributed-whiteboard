@@ -66,9 +66,7 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 			int w = getWidth();
 			int h = getHeight();
 			_buffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-			//blank = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-            //_g2d = (Graphics2D) _buffer.getGraphics();
-            _g2d = (Graphics2D) _buffer.createGraphics();
+			_g2d = (Graphics2D) _buffer.createGraphics();
 	        _g2d.setColor(Color.WHITE);
 	        _g2d.fillRect(0, 0, w, h);
 		} 		
@@ -112,7 +110,6 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 				
 			case CIRCLE:
 				try {
-//					setShapeSize();
 					_g2d.drawOval(_startPoint.x, _startPoint.y, _shapeWidth, _shapeWidth);
 					_isModified = true;
 				} catch (NullPointerException e) {
@@ -122,7 +119,6 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 				
 			case RECTANGLE:
 				try {
-//					setShapeSize();
 					_g2d.drawRect(_startPoint.x, _startPoint.y, _shapeWidth, _shapeHeight);
 					_isModified = true;
 				} catch (NullPointerException e) {
@@ -132,7 +128,6 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 			
 			case OVAL:
 				try {
-//					setShapeSize();
 					_g2d.drawOval(_startPoint.x, _startPoint.y, _shapeWidth, _shapeHeight);
 					_isModified = true;
 				} catch (NullPointerException e) {

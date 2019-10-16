@@ -39,6 +39,7 @@ public class MenuItem {
 		canvas.resetState(canvas.getType());
 		canvas.paint(canvas.getGraphics());
 		canvas.repaint();
+		canvas.sendBufferImage();
 	}
 	
 	public void open() {
@@ -57,6 +58,7 @@ public class MenuItem {
 		}
 		
 		canvas.setIsModified(false);
+		canvas.sendBufferImage();
 	}
 	
 	public void save( ) {

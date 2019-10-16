@@ -2,9 +2,13 @@ package client;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import javax.swing.JTextArea;
+
+import org.json.JSONObject;
+
 import whiteboard.ChatBox;
 import whiteboard.PaintCanvas;
 import whiteboard.Whiteboard;
@@ -26,15 +30,24 @@ public class JoinWhiteBoard {
 	
 	private JoinWhiteBoard(String HOST, int PORT, String USERNAME) {
 		try {
-			socket = new Socket("localhost", 8000);
+			this.HOST = HOST;
+			this.PORT = PORT;
+			this.USERNAME = USERNAME;
+			
+			socket = new Socket(HOST, PORT);
 			canvas = new PaintCanvas(socket);
+			
 			dos = new DataOutputStream(socket.getOutputStream());
 			dos.writeBoolean(false);
+			dos.writeChars(USERNAME);
 			dos.flush();
+			
 			contentArea = new JTextArea();
 			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
+			
 			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, false);
 			whiteboard.setVisible(true);
+			
 			Thread thread = new Thread(new ClientRunner(socket, canvas, contentArea));
 			thread.start();
         } 
