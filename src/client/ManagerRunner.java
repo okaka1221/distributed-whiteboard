@@ -73,7 +73,6 @@ private ArrayList<String> clientNameList =new ArrayList<String>();        //mana
 			if (json.getString("header").equals("Name")) {   
 				clientNameList.add(json.getString("body"));
 				System.out.println(clientNameList);
-				
 			}
 			
 			if (json.getString("header").equals("close")) {
