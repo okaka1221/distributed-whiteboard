@@ -34,7 +34,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 	
 	private ChatBox chatbox;
 	
-	public Whiteboard(PaintCanvas canvas, ChatBox chatbox) {
+	public Whiteboard(PaintCanvas canvas, ChatBox chatbox, boolean manager) {
 		this.chatbox = chatbox;
 		this.canvas = canvas;
 		this.menuItem = new MenuItem(canvas);
@@ -138,50 +138,53 @@ public class Whiteboard extends JFrame implements ActionListener {
 		group.add(rectangleButton);
 		group.add(ovalButton);
         
-        //Adding the menu bar
-		menu = new JMenuBar();
-		setJMenuBar(menu);
-        
-
-        //Adding menu components
-		newMenu = new JMenuItem("New");
-		newMenu.setActionCommand("new");
-		newMenu.addActionListener(this);
-		menu.add(newMenu);
-		
-		openMenu = new JMenuItem("Open");
-		openMenu.setActionCommand("open");
-		openMenu.addActionListener(this);
-		menu.add(openMenu);
-		
-		saveMenu = new JMenuItem("Save");
-		saveMenu.setActionCommand("save");
-		saveMenu.addActionListener(this);
-		menu.add(saveMenu);
-		
-		saveAsMenu = new JMenuItem("Save As");
-		saveAsMenu.setActionCommand("saveas");
-		saveAsMenu.addActionListener(this);
-		menu.add(saveAsMenu);
-		
-		exitMenu = new JMenuItem("Exit");
-		exitMenu.setActionCommand("exit");
-		exitMenu.addActionListener(this);
-		menu.add(exitMenu);
-        
+		if (manager) {
+	        //Adding the menu bar (NOT AVAILABLE TO NON MANAGING CLIENTS)
+			menu = new JMenuBar();
+			setJMenuBar(menu);
+	        
+	        //Adding menu bar components
+			newMenu = new JMenuItem("New");
+			newMenu.setActionCommand("new");
+			newMenu.addActionListener(this);
+			menu.add(newMenu);
+			
+			openMenu = new JMenuItem("Open");
+			openMenu.setActionCommand("open");
+			openMenu.addActionListener(this);
+			menu.add(openMenu);
+			
+			saveMenu = new JMenuItem("Save");
+			saveMenu.setActionCommand("save");
+			saveMenu.addActionListener(this);
+			menu.add(saveMenu);
+			
+			saveAsMenu = new JMenuItem("Save As");
+			saveAsMenu.setActionCommand("saveas");
+			saveAsMenu.addActionListener(this);
+			menu.add(saveAsMenu);
+			
+			exitMenu = new JMenuItem("Exit");
+			exitMenu.setActionCommand("exit");
+			exitMenu.addActionListener(this);
+			menu.add(exitMenu);
+		}
 
         //Set a custom close
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
         	@Override
         	public void windowClosing(WindowEvent e) {
-    			closingAction();
+        		if (manager)
+        			managerClosingAction();
+        		else 
+        			clientClosingAction();
     		}
 		});
 	}
     
     
-    //set a value for each action performed to the PaintCanvas class
+    //set a function for each action performed to the PaintCanvas class
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if (command.equals("freedraw")) {
@@ -224,7 +227,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 		}
 	}
 	
-	private void closingAction() {
+	private void managerClosingAction() {
 		int ans = JOptionPane.showConfirmDialog(
 				null, 
 				"Do you want to exit?", 
@@ -234,6 +237,18 @@ public class Whiteboard extends JFrame implements ActionListener {
 		if (ans == JOptionPane.YES_OPTION) {
 			System.out.println("Closed whiteboard.");
 			System.exit(0);
+		}
+	}
+	private void clientClosingAction() {
+		int ans = JOptionPane.showConfirmDialog(
+				null, 
+				"Do you want to exit?", 
+				"Confirm",
+				JOptionPane.YES_NO_OPTION);
+		
+		if (ans == JOptionPane.YES_OPTION) {
+			System.out.println("Client disconnected.");
+			dispose();
 		}
 	}
 }

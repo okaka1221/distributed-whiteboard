@@ -1,8 +1,6 @@
 package server;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,19 +8,23 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.List;
-
 import org.json.JSONObject;
-
-import java.util.Base64;
 
 public class ServerRunner implements Runnable  {
 	WhiteBoardServer server;
     private List<Socket> sockets;
     private Socket currentSocket;
+    private boolean isManger;
+    private Socket managerSocket;
    
-    public ServerRunner (WhiteBoardServer server, Socket currentSocket)  {
+    public ServerRunner (WhiteBoardServer server, Socket currentSocket, boolean isManager)  {
         this.server = server;
     	this.currentSocket = currentSocket;
+    	this.isManger = isManager;
+    	
+    	if(isManager) {
+    		managerSocket = currentSocket;
+    	}
     	
     	JSONObject canvasJson = server.getCanvasJson();
     	JSONObject chatboxJson = server.getChatboxJson();
@@ -41,10 +43,8 @@ public class ServerRunner implements Runnable  {
 				writer.flush();
 	    	}
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
@@ -54,7 +54,6 @@ public class ServerRunner implements Runnable  {
 		try {
 			InputStream is = currentSocket.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-			
 			String line;
 			while ((line = reader.readLine()) != null) {
 				JSONObject json = new JSONObject(line);
@@ -75,7 +74,6 @@ public class ServerRunner implements Runnable  {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
