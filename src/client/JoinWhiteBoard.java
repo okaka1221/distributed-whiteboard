@@ -48,7 +48,7 @@ public class JoinWhiteBoard {
 			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, false);
 			whiteboard.setVisible(true);
 			
-			Thread thread = new Thread(new ClientRunner(socket, canvas, contentArea));
+			Thread thread = new Thread(new ClientRunner(socket, canvas, contentArea, USERNAME));
 			thread.start();
         } 
         catch (UnknownHostException e) {

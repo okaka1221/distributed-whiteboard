@@ -10,6 +10,7 @@ import javax.swing.JTextArea;
 import org.json.JSONObject;
 
 import whiteboard.ChatBox;
+import whiteboard.ManagerChatBox;
 import whiteboard.PaintCanvas;
 import whiteboard.Whiteboard;
 
@@ -43,12 +44,13 @@ public class CreateWhiteBoard {
 			dos.writeChars(USERNAME);
 			dos.flush();
 			
-			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
+			ClientRunner managerRunner = new ManagerRunner(socket, canvas, contentArea, USERNAME);
+			ChatBox chatbox = new ManagerChatBox(socket, contentArea, (ManagerRunner) managerRunner, USERNAME);
 			
 			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, true);
 			whiteboard.setVisible(true);
 			
-			Thread thread = new Thread(new ClientRunner(socket, canvas, contentArea));
+			Thread thread = new Thread(managerRunner);
 			thread.start();
         } 
         catch (UnknownHostException e) {

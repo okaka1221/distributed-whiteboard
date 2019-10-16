@@ -63,6 +63,13 @@ public class WhiteBoardServer extends Thread {
 		    	System.out.println(sockets.size());
 		    	Thread thread = new Thread(sr);
 	            thread.start();
+	            
+	            JSONObject json = new JSONObject();
+	            json.put("header", "Name");
+				json.put("body", username);       //send the size information to WhiteBoradClient
+				OutputStreamWriter writer = new OutputStreamWriter(managerSocket.getOutputStream(), "UTF-8");
+				writer.write(json.toString() + "\n");
+				writer.flush();
 		    } 
         }
    }

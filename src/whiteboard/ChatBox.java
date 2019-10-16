@@ -27,7 +27,9 @@ public class ChatBox extends JFrame {
 	private Socket socket;
 	private JTextArea inputArea;
 	private JTextArea contentArea;
-	private  String name;
+	private String name;
+	private JButton btnNewButton;
+	String input = null;
 	
 
 	public ChatBox(Socket socket, JTextArea contentArea, String USERNAME) {
@@ -58,7 +60,7 @@ public class ChatBox extends JFrame {
 		spCA.setPreferredSize(new Dimension(100,100));
 		this.getContentPane().add(spCA, gbc_textArea);
 
-		JButton btnNewButton = new JButton("SEND");
+		btnNewButton = new JButton("SEND");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				hundleAction();
@@ -124,7 +126,10 @@ public class ChatBox extends JFrame {
         this.inputArea.setText("");
 	}
 	
-
+	public JButton getBtnNewButton() {
+		return btnNewButton;
+	}
+	
 	public  String getName() {
 		return name;
 	}
@@ -133,11 +138,31 @@ public class ChatBox extends JFrame {
 		this.name = name;
 	}
 
-	public JTextArea getContentArea() {
-		return contentArea;
+	public Socket getSocket() {
+		return this.socket;
 	}
-
+	
+	public JTextArea getInputArea() {
+		return this.inputArea;
+	}
+	
+	public JTextArea getContentArea() {
+		return this.contentArea;
+	}
+	
+	public void setSocket(Socket socket) {
+		this.socket=socket;
+	}
+	
+	public void setInputArea(JTextArea inputArea) {
+		this.inputArea=inputArea;
+	}
+	
 	public void setContentArea(JTextArea contentArea) {
-		this.contentArea = contentArea;
+		this.contentArea=contentArea;
+	}
+	
+	public void setInput() {
+		this.input = null;
 	}
 }

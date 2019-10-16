@@ -20,11 +20,13 @@ public class ClientRunner extends Thread {
     private Socket socket;
     private PaintCanvas canvas;
     private JTextArea contentArea;
+    private String name; 
     
-    public ClientRunner(Socket socket, PaintCanvas canvas, JTextArea  conteArea) {
-        this.socket = socket;
+    public ClientRunner(Socket socket, PaintCanvas canvas, JTextArea  conteArea, String name) {
+    	this.socket = socket;
         this.canvas = canvas;
         this.contentArea = conteArea;
+        this.name = name;
     }
    
     public void run()  {
@@ -62,6 +64,25 @@ public class ClientRunner extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+    }
+    
+    public Socket getSocket()
+    {
+    	return this.socket;
+    }
+    
+    public PaintCanvas getCanvas()
+    {
+    	return this.canvas;
+    }
+    
+    public JTextArea getContentArea()
+    {
+    	return this.contentArea;
+    }
+    
+    public String getClientName()
+    {
+    	return this.name;
     }
 }

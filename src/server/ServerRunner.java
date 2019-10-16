@@ -69,27 +69,26 @@ public class ServerRunner implements Runnable  {
 					
 					if (json.getString("header").equals("canvas")) {
 						server.setCanvasJson(json);
-					} else if (json.getString("header").equals("chatbox")) {
+					} 
+					
+					if (json.getString("header").equals("chatbox")) {
 						server.setChatboxJson(json);
-					} else if(!json.getString("header").equals("canvas") && !json.getString("header").equals("chatbox")) {
-						name = json.getString("header");
-						op = json.getString("body");
-						if(op.equals("client")) {
-							sockets.putIfAbsent(name, currentSocket);
-							if(server.getManager() == null) {
-								 server.setManager(name);
-								 System.out.println("Manager "+name+" Created a WhiteBoard.") ;
-							}
-						}else {
-							if(name.equals(server.getManager()) && server.getManager() != null) {
-								sockets.clear();
-								 System.out.println("Manager leaved, WhiteBoard is closed.") ;
-							}else {
-								sockets.remove(name);
-								System.out.println("Client "+name+" left.") ;
-							}
-						}
-						
+					}
+					
+					if (json.getString("header").equals("Name")) {
+						System.out.print("server successfully receive client name from client side: ");
+						System.out.println(json.getString("body"));
+					}
+					
+					if (json.getString("header").equals("Remove")) {
+						String username = json.getString("body");       //remove socket and close socket						
+						sockets.get(username).close();
+						sockets.remove(username);
+						System.out.println("gooooooooood");
+					}
+					
+					if (json.getString("header").equals("close")) {
+						System.out.print("server successfully receive empty: ");   //the close command will be distributed by server later
 					}
 					
 					for (Socket s: sockets.values()) {
