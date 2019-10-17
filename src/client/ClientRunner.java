@@ -57,6 +57,16 @@ public class ClientRunner extends Thread {
 					}
 				} 
 				
+				if (json.getString("header").equals("quit")) {
+					JOptionPane.showMessageDialog(
+							null, 
+							"Manager close whiteboard.", "Error",
+					        JOptionPane.ERROR_MESSAGE);
+					
+					socket.close();
+					System.exit(0);
+				} 
+				
 				if (json.getString("header").equals("canvas")) {
 					String encodedImage = json.getString("body");
 					

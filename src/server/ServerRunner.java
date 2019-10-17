@@ -21,8 +21,8 @@ public class ServerRunner implements Runnable  {
     private Socket currentSocket;
     private boolean isManger;
     private Socket managerSocket;
-    private String name;
-    private String op;
+    private JSONObject canvasJson = new JSONObject();
+	private JSONObject chatboxJson = new JSONObject();
    
     public ServerRunner (WhiteBoardServer server, Socket currentSocket, boolean isManager)  {
         this.server = server;
@@ -32,9 +32,6 @@ public class ServerRunner implements Runnable  {
     	if(isManager) {
     		managerSocket = currentSocket;
     	}
-    	
-    	JSONObject canvasJson = server.getCanvasJson();
-    	JSONObject chatboxJson = server.getChatboxJson();
     	
     	OutputStreamWriter writer;
 		try {
@@ -80,8 +77,8 @@ public class ServerRunner implements Runnable  {
 						writer.write(json.toString() + "\n");
 						writer.flush();
 						server.sendUserList();
-					} 
-
+					}
+					
 					if (json.getString("header").equals("reject")) {
 						String username = json.getString("body");
 						Socket socket = sockets.get(username);
@@ -94,19 +91,26 @@ public class ServerRunner implements Runnable  {
 						sockets.remove(username);
 					}
 					
+					if (json.getString("header").equals("quit")) {
+						server.refreshState();
+						json.put("header", "quit");
+						json.put("body", "null");
+					}
+					
 					if (json.getString("header").equals("canvas")) {
-						server.setCanvasJson(json);
-					} 
+						canvasJson = json;
+					}
 					
 					if (json.getString("header").equals("chatbox")) {
-						server.setChatboxJson(json);
+						chatboxJson = json;
 					}
 					
 					if (json.getString("header").equals("remove")) {
-						String username = json.getString("body");       //remove socket and close socket												
+						String username = json.getString("body");												
 						sockets.get(username).close();
 						sockets.remove(username);
-						System.out.println("gooooooooood");
+						
+						this.sockets = server.getSockets();
 						
 						List<String> userList = new ArrayList<>(this.sockets.keySet());
 					    JSONArray jArray = new JSONArray(userList);
@@ -130,20 +134,4 @@ public class ServerRunner implements Runnable  {
 			e.printStackTrace();
 		}
     }
-    
-    public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getOp() {
-		return op;
-	}
-
-	public void setOp(String op) {
-		this.op = op;
-	}
 }

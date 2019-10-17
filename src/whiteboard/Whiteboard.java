@@ -2,14 +2,19 @@ package whiteboard;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+
 import javax.swing.*;
+
+import org.json.JSONObject;
 
 public class Whiteboard extends JFrame implements ActionListener {
 	/**
      *
      */
     private static final long serialVersionUID = 1L;
-    private PaintCanvas canvas;
+    
 	private MenuItem menuItem;	
 	private JToggleButton freedrawButton;
 	private JToggleButton eraseButton;
@@ -32,11 +37,14 @@ public class Whiteboard extends JFrame implements ActionListener {
 	private JMenuItem saveAsMenu;
 	private JMenuItem exitMenu;
 	
+	private Socket socket;
+	private PaintCanvas canvas;
 	private ChatBox chatbox;
 	
-	public Whiteboard(PaintCanvas canvas, ChatBox chatbox, UserList userlist, boolean manager) {
+	public Whiteboard(Socket socket, PaintCanvas canvas, ChatBox chatbox, UserList userlist, boolean manager) {
+		this.socket = socket;
+		this.canvas = canvas; 
 		this.chatbox = chatbox;
-		this.canvas = canvas;
 		this.menuItem = new MenuItem(canvas);
 		
 		JSplitPane sp = new JSplitPane();
@@ -232,7 +240,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 			menuItem.saveAs();
 		} else if (command.contentEquals("exit")) {
 			menuItem.setCanvas(canvas);
-			menuItem.exit();
+			managerClosingAction();
 		}
 	}
 	
@@ -244,7 +252,20 @@ public class Whiteboard extends JFrame implements ActionListener {
 				JOptionPane.YES_NO_OPTION);
 		
 		if (ans == JOptionPane.YES_OPTION) {
-			System.out.println("Closed whiteboard.");
+			
+			try  {
+	        	JSONObject json = new JSONObject();
+				json.put("header", "quit");
+				json.put("body", "null");
+				
+				OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+				writer.write(json.toString() + "\n");
+				writer.flush();
+				System.out.println("Manager quit.");
+	        }catch(Exception e1)  {
+	            e1.printStackTrace();
+	        }
+			
 			System.exit(0);
 		}
 	}
@@ -258,6 +279,8 @@ public class Whiteboard extends JFrame implements ActionListener {
 		if (ans == JOptionPane.YES_OPTION) {
 			System.out.println("Client disconnected.");
 			dispose();
+			
+			
 		}
 	}
 }

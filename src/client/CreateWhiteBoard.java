@@ -26,7 +26,7 @@ public class CreateWhiteBoard {
 	private CreateWhiteBoard() {
 		HOST = "localhost";
 		PORT = 8000;
-		USERNAME = "#TESTMANAGER#";
+		USERNAME = "#TESTMANAGER#11";
 		new CreateWhiteBoard(HOST, PORT, USERNAME);
 	}
 	
@@ -47,15 +47,17 @@ public class CreateWhiteBoard {
 			
 			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
 			UserList userlist = new UserList(socket, true);
-			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, userlist, true);
+			Whiteboard whiteboard = new Whiteboard(socket, canvas, chatbox, userlist, true);
 			whiteboard.setVisible(true);
 			
 			Thread thread = new Thread(new ManagerRunner(socket, userlist, canvas, contentArea));
 			thread.start();
-        } 
+        }
+		
         catch (UnknownHostException e) {
 			e.printStackTrace();
-        } 
+        }
+		
         catch (IOException e) {
 			e.printStackTrace();
         }

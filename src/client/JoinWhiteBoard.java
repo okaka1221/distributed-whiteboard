@@ -57,7 +57,7 @@ public class JoinWhiteBoard {
 			contentArea = new JTextArea();
 			chatbox = new ChatBox(socket, contentArea, USERNAME);
 			userlist = new UserList(null, false);
-			whiteboard = new Whiteboard(canvas, chatbox, userlist, false);
+			whiteboard = new Whiteboard(socket, canvas, chatbox, userlist, false);
 			
 			Thread thread = new Thread(new ClientRunner(this, socket, userlist, canvas, contentArea));
 			thread.start();

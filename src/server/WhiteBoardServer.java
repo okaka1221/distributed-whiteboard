@@ -13,8 +13,6 @@ import java.io.*;
  
 public class WhiteBoardServer extends Thread {
 	private Map<String,Socket> sockets = new HashMap<String,Socket>(); //Connections of all clients.
-	private JSONObject canvasJson = new JSONObject();
-	private JSONObject chatboxJson = new JSONObject();
 	ServerSocket ss;
 	Socket socket;
 	DataInputStream dis;
@@ -37,7 +35,7 @@ public class WhiteBoardServer extends Thread {
 		    	username += s;
 		    }
 		    
-		    System.out.println(isManager);
+		    System.out.println(managerCount);
 		    InetAddress ip = socket.getInetAddress();
 		    
 		    if ((isManager) && (managerCount == 0)) {
@@ -63,6 +61,7 @@ public class WhiteBoardServer extends Thread {
 		    	if (!sockets.containsKey(username)) {
 			    	sockets.put(username, socket);
 		       	   	System.out.println(sockets.size());
+		       	   	System.out.println(sockets.keySet());
 		       	   	Thread thread = new Thread(sr);
 		       	   	thread.start();
 		       	   	
@@ -109,37 +108,20 @@ public class WhiteBoardServer extends Thread {
 		}
    }
    
+   public void refreshState() {
+	   this.sockets = new HashMap<String,Socket>();
+	   this.managerSocket = null;
+	   this.managerCount = 0;
+	   this.manager = null;
+	   System.out.println("test");
+   }
+   
    public Map<String, Socket> getSockets() {
 		return sockets;
 	}
 
 	public void setSockets(Map<String, Socket> sockets) {
 		this.sockets = sockets;
-	}
-
- 
-  public JSONObject getCanvasJson() {
-		return this.canvasJson;
-	}
-	
-	public void setCanvasJson(JSONObject json) {
-		this.canvasJson = json;
-	}
-	
-	public JSONObject getChatboxJson() {
-		return this.chatboxJson;
-	}
-	
-	public void setChatboxJson(JSONObject json) {
-		this.chatboxJson = json;
-	}
-
-	public String getManager() {
-		return manager;
-	}
-
-	public void setManager(String manager) {
-		this.manager = manager;
 	}
 }
 
