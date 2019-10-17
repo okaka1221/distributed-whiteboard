@@ -19,7 +19,6 @@ import org.json.JSONObject;
 
 import java.awt.Insets;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 public class ChatBox extends JFrame {
@@ -37,8 +36,6 @@ public class ChatBox extends JFrame {
 		this.name = USERNAME;
 		this.setContentArea(contentArea);
 	
-		
-//		name = JOptionPane.showInputDialog("Please input your name.");
 		this.setBounds(100, 100, 450, 300);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -47,7 +44,6 @@ public class ChatBox extends JFrame {
 		gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 1.0, 0.0, 1.0, Double.MIN_VALUE };
 		this.getContentPane().setLayout(gridBagLayout);
-
 		
 		GridBagConstraints gbc_textArea = new GridBagConstraints();
 		gbc_textArea.gridwidth = 2;
@@ -80,7 +76,6 @@ public class ChatBox extends JFrame {
 		gbc_btnNewButton.gridy = 2;
 		this.getContentPane().add(btnNewButton, gbc_btnNewButton);
 
-		
 		inputArea = new JTextArea();
 		JScrollPane spIn = new JScrollPane(inputArea);// add scrollPane to input Area.
 		GridBagConstraints gbc_textArea_1 = new GridBagConstraints();

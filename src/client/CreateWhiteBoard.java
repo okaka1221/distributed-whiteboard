@@ -1,6 +1,5 @@
 package client;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -8,9 +7,10 @@ import java.net.UnknownHostException;
 import javax.swing.JTextArea;
 
 import org.json.JSONObject;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 
 import whiteboard.ChatBox;
-import whiteboard.ManagerChatBox;
 import whiteboard.PaintCanvas;
 import whiteboard.UserList;
 import whiteboard.Whiteboard;
@@ -19,23 +19,29 @@ public class CreateWhiteBoard {
 	private Socket socket;
 	private PaintCanvas canvas;
 	private JTextArea contentArea;
-	private DataOutputStream dos;
-	private String HOST, USERNAME;
+	private String HOST;
 	private int PORT;
+	private String USERNAME;
 	
-	private CreateWhiteBoard() {
-		HOST = "localhost";
-		PORT = 8000;
-		USERNAME = "#TESTMANAGER#";
-		new CreateWhiteBoard(HOST, PORT, USERNAME);
-	}
-	
-	private CreateWhiteBoard(String HOST, int PORT, String USERNAME) {
+	private CreateWhiteBoard(String args[]) {
+		JoinWhiteBoardArgs bean = new JoinWhiteBoardArgs();
+		
+		// Parse parameters.
+        CmdLineParser parser = new CmdLineParser(bean);
+        
+        try {
+			parser.parseArgument(args);
+		} catch (CmdLineException e) {
+			System.out.println(e.getMessage());
+			parser.printUsage(System.out);
+			System.exit(0);
+		}
+        
+        this.HOST = bean.getHost();
+		this.PORT = bean.getPort();
+		this.USERNAME = bean.getUsername();
+		
 		try {
-			this.HOST = HOST;
-			this.PORT = PORT;
-			this.USERNAME = USERNAME;
-			
 			socket = new Socket(HOST, PORT);
 			canvas = new PaintCanvas(socket);
 			contentArea = new JTextArea();
@@ -67,16 +73,6 @@ public class CreateWhiteBoard {
 	}
 	
 	public static void main(String args[])  {
-		try {
-			if (args.length == 0)
-				new CreateWhiteBoard();
-			else if (args.length == 3)
-				new CreateWhiteBoard(args[0], Integer.parseInt(args[1]), args[2]);
-			else
-				throw new IOException("Illegal arguments!!!!");
-        } 
-        catch(Exception e)  {
-            e.printStackTrace();
-        }
+		new CreateWhiteBoard(args);
     }
 }

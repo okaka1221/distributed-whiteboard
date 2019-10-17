@@ -1,18 +1,16 @@
 package client;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JTextArea;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 
 import whiteboard.ChatBox;
 import whiteboard.PaintCanvas;
@@ -29,23 +27,29 @@ public class JoinWhiteBoard {
 	private Whiteboard whiteboard;
 	
 	DataOutputStream dos;
-	private String HOST, USERNAME;
+	private String HOST;
 	private int PORT;
-	private boolean isAccepted;
+	private String USERNAME;
 	
-	private JoinWhiteBoard() {
-		HOST = "localhost";
-		PORT = 8000;
-		USERNAME = "#TESTCIENT#aaa";
-		new JoinWhiteBoard(HOST, PORT, USERNAME);
-	}
-	
-	private JoinWhiteBoard(String HOST, int PORT, String USERNAME) {
-		try {
-			this.HOST = HOST;
-			this.PORT = PORT;
-			this.USERNAME = USERNAME;
-			
+	private JoinWhiteBoard(String args[]) {
+		JoinWhiteBoardArgs bean = new JoinWhiteBoardArgs();
+		
+		// Parse parameters.
+        CmdLineParser parser = new CmdLineParser(bean);
+        
+        try {
+			parser.parseArgument(args);
+		} catch (CmdLineException e) {
+			System.out.println(e.getMessage());
+			parser.printUsage(System.out);
+			System.exit(0);
+		}
+        
+        this.HOST = bean.getHost();
+		this.PORT = bean.getPort();
+		this.USERNAME = bean.getUsername();
+		
+        try {
 			socket = new Socket(HOST, PORT);
 			canvas = new PaintCanvas(socket);
 			
@@ -78,16 +82,6 @@ public class JoinWhiteBoard {
 	}
 	
 	public static void main(String args[])  {
-        try {
-        	if (args.length == 0)
-        		new JoinWhiteBoard();
-        	else if (args.length == 3)
-        		new JoinWhiteBoard(args[0], Integer.parseInt(args[1]), args[2]);
-        	else
-        		throw new IOException("Illegal arguments!!!!");
-        } 
-        catch(Exception e)  {
-            e.printStackTrace();
-        }
+        new JoinWhiteBoard(args);  	
     }
 }

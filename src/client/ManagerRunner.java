@@ -48,17 +48,11 @@ public class ManagerRunner extends Thread {
 					String username = json.getString("body");
 					
 					String[] options = {"Accept", "Reject"};
-					int ans = JOptionPane.showOptionDialog(
-							null, 
-							'"'+ username + '"' +  " is trying to join whiteboard?", 
-							"Confirm",
-							JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE,
-							null,
-							options,
-							null);
+					int ans = JOptionPane.showOptionDialog(null,  '"'+ username + '"' +  " is trying to join whiteboard?",  "Confirm", 
+															JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
 					
 					JSONObject jsonOut = new JSONObject();
+					
 					if (ans == 0) {
 						jsonOut.put("header", "accept");
 						jsonOut.put("body", username);
@@ -79,6 +73,7 @@ public class ManagerRunner extends Thread {
 						byte[] imageBytes = Base64.getDecoder().decode((encodedImage));
 						ByteArrayInputStream bais = new ByteArrayInputStream(imageBytes);
 						BufferedImage image = ImageIO.read(bais);
+						
 						if (image != null) {
 							canvas.setG2D(image);
 							canvas.setBuffer(image);

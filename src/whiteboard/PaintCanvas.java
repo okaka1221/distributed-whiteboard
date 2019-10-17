@@ -15,9 +15,6 @@ import org.json.*;
 import java.util.Base64;
 
 public class PaintCanvas extends Canvas implements MouseListener, MouseMotionListener {
-	/**
-     *
-     */
 
     private static final long serialVersionUID = 1L;
 	public static final int NONE	  = -1;

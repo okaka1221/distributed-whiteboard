@@ -6,7 +6,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -58,20 +57,14 @@ public class ClientRunner extends Thread {
 				} 
 				
 				if (json.getString("header").equals("close")) {
-					JOptionPane.showMessageDialog(
-							null, 
-							"You are removed from whiteboard.", "Error",
-					        JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "You are removed from whiteboard.", "Error", JOptionPane.ERROR_MESSAGE);
 					
 					socket.close();	
 					System.exit(0);
 				}
 				
 				if (json.getString("header").equals("quit")) {
-					JOptionPane.showMessageDialog(
-							null, 
-							"Manager close whiteboard.", "Error",
-					        JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Manager close whiteboard.", "Error", JOptionPane.ERROR_MESSAGE);
 					
 					socket.close();
 					System.exit(0);
@@ -80,10 +73,7 @@ public class ClientRunner extends Thread {
 				if (json.getString("header").equals("error")) {
 					String message = json.getString("body");
 					if (message.equals("duplicate")) {
-						JOptionPane.showMessageDialog(
-								null, 
-								"Same username already exists.", "Error",
-						        JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Same username already exists.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					
 					socket.close();	
@@ -106,7 +96,7 @@ public class ClientRunner extends Thread {
 				
 				if (json.getString("header").equals("chatbox")) {
 					String message = json.getString("body");
-					System.out.println(message.length());
+					
 					if (message.length() > 0) {
 						System.out.println(message);
                         contentArea.append(message);

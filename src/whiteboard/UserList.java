@@ -7,7 +7,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.*;
@@ -16,9 +15,7 @@ import javax.swing.border.EmptyBorder;
 import org.json.JSONObject;
 
 public class UserList extends JPanel implements ActionListener {
-	/**
-     *
-     */
+
 	private List<String> nameList = new ArrayList<String>();
     private Socket managerSocket;
     private boolean isManager;

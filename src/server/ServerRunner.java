@@ -1,18 +1,14 @@
 package server;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ServerRunner implements Runnable  {
@@ -73,9 +69,11 @@ public class ServerRunner implements Runnable  {
 						
 						json.put("header", "permission");
 						json.put("body", "accept");
+						
 						OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
 						writer.write(json.toString() + "\n");
 						writer.flush();
+						
 						server.sendUserList();
 					}
 					
@@ -85,9 +83,11 @@ public class ServerRunner implements Runnable  {
 						
 						json.put("header", "permission");
 						json.put("body", "reject");
+						
 						OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
 						writer.write(json.toString() + "\n");
-						writer.flush();			
+						writer.flush();
+						
 						sockets.remove(username);
 					}
 					
@@ -111,6 +111,7 @@ public class ServerRunner implements Runnable  {
 						
 						json.put("header", "close");
 						json.put("body", "null");
+						
 						OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
 						writer.write(json.toString() + "\n");
 						writer.flush();
@@ -123,7 +124,6 @@ public class ServerRunner implements Runnable  {
 					
 					if (json.getString("header").equals("exit")) {
 						String username = json.getString("body");
-						Socket socket = sockets.get(username);
 						
 						sockets.get(username).close();
 						sockets.remove(username);

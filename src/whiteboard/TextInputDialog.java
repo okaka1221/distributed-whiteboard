@@ -52,6 +52,7 @@ public class TextInputDialog extends JDialog implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		text = textField.getText().toString();
+		
 		try {
 			Graphics2D _g2d = parentCanvas.getG2D();
 			_g2d.setFont(new Font("Serif", Font.PLAIN, 24));
@@ -62,6 +63,7 @@ public class TextInputDialog extends JDialog implements ActionListener {
 		} catch (NullPointerException e1) {
 			System.out.println(e1.getMessage());
 		}
+		
 		dispose();
 	}
 }

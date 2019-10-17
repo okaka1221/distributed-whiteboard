@@ -86,6 +86,7 @@ public class MenuItem {
 			if (!(format.toLowerCase().equals("jpg") || format.toLowerCase().equals("jpeg"))) {
 				file = new File(fileName.concat(".jpg"));
 			}
+			
 			try {
 				ImageIO.write(canvas.getBuffer(), "jpg", file);
 				canvas.setIsModified(false);

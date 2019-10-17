@@ -12,9 +12,7 @@ import javax.swing.*;
 import org.json.JSONObject;
 
 public class Whiteboard extends JFrame implements ActionListener {
-	/**
-     *
-     */
+
     private static final long serialVersionUID = 1L;
     
 	private MenuItem menuItem;	
@@ -32,7 +30,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 	private JComboBox<String> sizeCombo;
 	private JButton colorButton;
 	private JButton chatButton;
-	JMenuBar menu;
+	private JMenuBar menu;
 	private JMenuItem newMenu;
 	private JMenuItem openMenu;
 	private JMenuItem saveMenu;
