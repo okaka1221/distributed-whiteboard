@@ -106,21 +106,19 @@ public class ServerRunner implements Runnable  {
 					}
 					
 					if (json.getString("header").equals("remove")) {
-						String username = json.getString("body");												
+						String username = json.getString("body");
+						Socket socket = sockets.get(username);
+						
+						json.put("header", "close");
+						json.put("body", "null");
+						OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+						writer.write(json.toString() + "\n");
+						writer.flush();
+						
 						sockets.get(username).close();
 						sockets.remove(username);
-						
-						this.sockets = server.getSockets();
-						
-						List<String> userList = new ArrayList<>(this.sockets.keySet());
-					    JSONArray jArray = new JSONArray(userList);
-			            json.put("header", "name");
-						json.put("body", jArray);       //send the size information to WhiteBoradClient
-						json.put("manager", server.manager);
-					}
-					
-					if (json.getString("header").equals("close")) {
-						System.out.print("server successfully receive empty: ");   //the close command will be distributed by server later
+						server.setSockets(sockets);
+						server.sendUserList();
 					}
 					
 					for (Socket s: sockets.values()) {

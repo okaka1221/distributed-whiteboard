@@ -47,7 +47,7 @@ public class CreateWhiteBoard {
 			
 			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
 			UserList userlist = new UserList(socket, true);
-			Whiteboard whiteboard = new Whiteboard(socket, canvas, chatbox, userlist, true);
+			Whiteboard whiteboard = new Whiteboard(socket, USERNAME, canvas, chatbox, userlist, true);
 			whiteboard.setVisible(true);
 			
 			Thread thread = new Thread(new ManagerRunner(socket, userlist, canvas, contentArea));

@@ -36,7 +36,7 @@ public class JoinWhiteBoard {
 	private JoinWhiteBoard() {
 		HOST = "localhost";
 		PORT = 8000;
-		USERNAME = "#TESTCIENT#";
+		USERNAME = "#TESTCIENTaaa#";
 		new JoinWhiteBoard(HOST, PORT, USERNAME);
 	}
 	
@@ -57,7 +57,7 @@ public class JoinWhiteBoard {
 			contentArea = new JTextArea();
 			chatbox = new ChatBox(socket, contentArea, USERNAME);
 			userlist = new UserList(null, false);
-			whiteboard = new Whiteboard(socket, canvas, chatbox, userlist, false);
+			whiteboard = new Whiteboard(socket, USERNAME, canvas, chatbox, userlist, false);
 			
 			Thread thread = new Thread(new ClientRunner(this, socket, userlist, canvas, contentArea));
 			thread.start();

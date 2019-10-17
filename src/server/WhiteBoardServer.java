@@ -41,14 +41,18 @@ public class WhiteBoardServer extends Thread {
 		    if ((isManager) && (managerCount == 0)) {
 		    	managerCount++;
 		    	managerSocket = socket;
+		    	manager = username;
+		    	
 		    	System.out.println("Manager connected! IP is " + ip);
 		    	System.out.println("Usernaem: " + username);
+		    	
 		    	ServerRunner msr = new ServerRunner(this, socket, true);
 		    	sockets.put(username, socket);
-		    	manager = username;
+
 		    	Thread thread = new Thread(msr);
 	            thread.start();
 			    sendUserList();
+			    
 		    } else if((isManager) && (managerCount != 0)) {
 		    	throw new IOException("A manager already exists! Please join as a client!");
 		    } else if((!isManager) && (managerCount == 0)) {
@@ -58,20 +62,23 @@ public class WhiteBoardServer extends Thread {
 		    	System.out.println("Usernaem: " + username);
 		    	ServerRunner sr = new ServerRunner(this, socket, false);
 		    	
-		    	if (!sockets.containsKey(username)) {
-			    	sockets.put(username, socket);
-		       	   	System.out.println(sockets.size());
-		       	   	System.out.println(sockets.keySet());
-		       	   	Thread thread = new Thread(sr);
-		       	   	thread.start();
-		       	   	
-			    	JSONObject json = new JSONObject();
-		            json.put("header", "join");
-					json.put("body", username);
-					OutputStreamWriter writer = new OutputStreamWriter(managerSocket.getOutputStream(), "UTF-8");
-					writer.write(json.toString() + "\n");
-					writer.flush();
-		    	}
+		    	sockets.put(username, socket);
+	       	   	Thread thread = new Thread(sr);
+	       	   	thread.start();
+	       	   	
+		    	JSONObject json = new JSONObject();
+	            json.put("header", "join");
+				json.put("body", username);
+				OutputStreamWriter writer = new OutputStreamWriter(managerSocket.getOutputStream(), "UTF-8");
+				writer.write(json.toString() + "\n");
+				writer.flush();
+		    } else {
+	    		JSONObject json = new JSONObject();
+	            json.put("header", "error");
+				json.put("body", "duplicate");
+				OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+				writer.write(json.toString() + "\n");
+				writer.flush();
 		    }
         }
    }

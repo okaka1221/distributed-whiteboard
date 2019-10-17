@@ -2,7 +2,9 @@ package whiteboard;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
 import javax.swing.*;
@@ -38,11 +40,13 @@ public class Whiteboard extends JFrame implements ActionListener {
 	private JMenuItem exitMenu;
 	
 	private Socket socket;
+	private String username;
 	private PaintCanvas canvas;
 	private ChatBox chatbox;
 	
-	public Whiteboard(Socket socket, PaintCanvas canvas, ChatBox chatbox, UserList userlist, boolean manager) {
+	public Whiteboard(Socket socket, String username, PaintCanvas canvas, ChatBox chatbox, UserList userlist, boolean manager) {
 		this.socket = socket;
+		this.username = username;
 		this.canvas = canvas; 
 		this.chatbox = chatbox;
 		this.menuItem = new MenuItem(canvas);
@@ -257,15 +261,14 @@ public class Whiteboard extends JFrame implements ActionListener {
 	        	JSONObject json = new JSONObject();
 				json.put("header", "quit");
 				json.put("body", "null");
-				
 				OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
 				writer.write(json.toString() + "\n");
 				writer.flush();
-				System.out.println("Manager quit.");
 	        }catch(Exception e1)  {
 	            e1.printStackTrace();
 	        }
 			
+			System.out.println("Manager quit.");
 			System.exit(0);
 		}
 	}
@@ -277,10 +280,24 @@ public class Whiteboard extends JFrame implements ActionListener {
 				JOptionPane.YES_NO_OPTION);
 		
 		if (ans == JOptionPane.YES_OPTION) {
+			try {
+				JSONObject json = new JSONObject();
+				json.put("header", "remove");
+				json.put("body", this.username);
+				OutputStreamWriter writer;
+				writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+				writer.write(json.toString() + "\n");
+				writer.flush();
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			System.out.println("Client disconnected.");
-			dispose();
-			
-			
+			System.exit(0);
 		}
 	}
 }

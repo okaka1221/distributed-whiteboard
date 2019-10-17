@@ -71,7 +71,6 @@ public class UserList extends JPanel implements ActionListener {
     }
 	
 	public void setManagerName(String name) {
-		System.out.println(name);
 		this.mananger = name;
 	}
 	

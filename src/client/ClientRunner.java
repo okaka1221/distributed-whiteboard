@@ -57,6 +57,16 @@ public class ClientRunner extends Thread {
 					}
 				} 
 				
+				if (json.getString("header").equals("close")) {
+					JOptionPane.showMessageDialog(
+							null, 
+							"You are removed from whiteboard.", "Error",
+					        JOptionPane.ERROR_MESSAGE);
+					
+					socket.close();	
+					System.exit(0);
+				}
+				
 				if (json.getString("header").equals("quit")) {
 					JOptionPane.showMessageDialog(
 							null, 
@@ -66,6 +76,19 @@ public class ClientRunner extends Thread {
 					socket.close();
 					System.exit(0);
 				} 
+				
+				if (json.getString("header").equals("error")) {
+					String message = json.getString("body");
+					if (message.equals("duplicate")) {
+						JOptionPane.showMessageDialog(
+								null, 
+								"Same username already exists.", "Error",
+						        JOptionPane.ERROR_MESSAGE);
+					}
+					
+					socket.close();	
+					System.exit(0);
+				}
 				
 				if (json.getString("header").equals("canvas")) {
 					String encodedImage = json.getString("body");
