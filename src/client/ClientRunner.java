@@ -51,6 +51,7 @@ public class ClientRunner extends Thread {
 					if (res.equals("accept")) {
 						client.establishWhitebord();
 					} else {
+						JOptionPane.showMessageDialog(null, "You are rejected by manager.", "Error", JOptionPane.ERROR_MESSAGE);
 						socket.close();
 						System.exit(0);
 					}
@@ -64,7 +65,7 @@ public class ClientRunner extends Thread {
 				}
 				
 				if (json.getString("header").equals("quit")) {
-					JOptionPane.showMessageDialog(null, "Manager close whiteboard.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Manager closed whiteboard.", "Error", JOptionPane.ERROR_MESSAGE);
 					
 					socket.close();
 					System.exit(0);
@@ -72,7 +73,10 @@ public class ClientRunner extends Thread {
 				
 				if (json.getString("header").equals("error")) {
 					String message = json.getString("body");
-					if (message.equals("duplicate")) {
+					System.out.println(message);
+					if (message.equals("manager absent")) {
+						JOptionPane.showMessageDialog(null, "No manager available. Please join as a manager.", "Error", JOptionPane.ERROR_MESSAGE);
+					} else if (message.equals("duplicate username")) {
 						JOptionPane.showMessageDialog(null, "Same username already exists.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					
@@ -120,7 +124,8 @@ public class ClientRunner extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Connection Failed.", "Error", JOptionPane.ERROR_MESSAGE);
+			System.out.println(e.getMessage());
 		}
     }
     

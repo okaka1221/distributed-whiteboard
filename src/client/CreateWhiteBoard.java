@@ -3,7 +3,10 @@ package client;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 import org.json.JSONObject;
@@ -61,14 +64,15 @@ public class CreateWhiteBoard {
 			
 			Thread thread = new Thread(new ManagerRunner(socket, userlist, canvas, contentArea));
 			thread.start();
-        }
-		
-        catch (UnknownHostException e) {
-			e.printStackTrace();
-        }
-		
-        catch (IOException e) {
-			e.printStackTrace();
+        } catch (UnknownHostException e) {
+        	JOptionPane.showMessageDialog(null, "Unknown Host.", "Error", JOptionPane.ERROR_MESSAGE);
+			System.out.println(e.getMessage());
+        } catch (SocketException e){
+        	JOptionPane.showMessageDialog(null, "Server is not running.", "Error", JOptionPane.ERROR_MESSAGE);
+			System.out.println(e.getMessage());
+        } catch (IOException e) {
+        	JOptionPane.showMessageDialog(null, "Connection Failed", "Error", JOptionPane.ERROR_MESSAGE);
+        	System.out.println(e.getMessage());
         }
 	}
 	

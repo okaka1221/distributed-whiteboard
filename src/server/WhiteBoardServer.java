@@ -15,12 +15,18 @@ import java.io.*;
  
 public class WhiteBoardServer extends Thread {
 	private Map<String,Socket> sockets = new HashMap<String,Socket>();
+	
 	ServerSocket ss;
 	Socket socket;
 	DataInputStream dis;
+	
 	Socket managerSocket = null;
 	int managerCount = 0;
 	public String manager = null;
+	
+	private JSONObject json;
+	private JSONObject canvasJson = new JSONObject();
+	private JSONObject chatboxJson = new JSONObject();
 	
 	public WhiteBoardServer(String args[]) {
 		WhiteBoardServerArgs bean = new WhiteBoardServerArgs();
@@ -90,9 +96,21 @@ public class WhiteBoardServer extends Thread {
 				    sendUserList();
 				    
 			    } else if((isManager) && (managerCount != 0)) {
-			    	throw new IOException("A manager already exists! Please join as a client!");
+			    	json = new JSONObject();
+		            json.put("header", "error");
+					json.put("body", "multiple manager");
+					
+					OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+					writer.write(json.toString() + "\n");
+					writer.flush();
 			    } else if((!isManager) && (managerCount == 0)) {
-			    	throw new IOException("No manager available! Please join as a manager!");
+			    	json = new JSONObject();
+		            json.put("header", "error");
+					json.put("body", "manager absent");
+					
+					OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+					writer.write(json.toString() + "\n");
+					writer.flush();
 			    } else if (!sockets.containsKey(username)){
 			    	System.out.println("New Client connected! IP is" + ip);
 			    	System.out.println("Usernaem: " + username);
@@ -103,7 +121,7 @@ public class WhiteBoardServer extends Thread {
 		       	   	Thread thread = new Thread(sr);
 		       	   	thread.start();
 		       	   	
-			    	JSONObject json = new JSONObject();
+			    	json = new JSONObject();
 		            json.put("header", "join");
 					json.put("body", username);
 					
@@ -113,7 +131,7 @@ public class WhiteBoardServer extends Thread {
 			    } else {
 		    		JSONObject json = new JSONObject();
 		            json.put("header", "error");
-					json.put("body", "duplicate");
+					json.put("body", "duplicate username");
 					
 					OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
 					writer.write(json.toString() + "\n");
@@ -121,8 +139,7 @@ public class WhiteBoardServer extends Thread {
 			    }
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
    }
    
@@ -144,11 +161,9 @@ public class WhiteBoardServer extends Thread {
 				writer.write(json.toString() + "\n");
 				writer.flush();
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 		}
    }
@@ -161,11 +176,27 @@ public class WhiteBoardServer extends Thread {
    }
    
    public Map<String, Socket> getSockets() {
-		return sockets;
+		return this.sockets;
 	}
 
 	public void setSockets(Map<String, Socket> sockets) {
 		this.sockets = sockets;
+	}
+	
+	public JSONObject getCanvasJson() {
+		return this.canvasJson;
+	}
+	
+	public void setCanvasJson(JSONObject canvasJson) {
+		this.canvasJson = canvasJson;
+	}
+	
+	public JSONObject getChatbocxJson() {
+		return this.chatboxJson;
+	}
+	
+	public void setChatboxJson(JSONObject canvasJson) {
+		this.chatboxJson = chatboxJson;
 	}
 }
 

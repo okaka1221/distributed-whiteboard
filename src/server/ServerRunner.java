@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import org.json.JSONObject;
 
 public class ServerRunner implements Runnable  {
@@ -17,8 +19,6 @@ public class ServerRunner implements Runnable  {
     private Socket currentSocket;
     private boolean isManger;
     private Socket managerSocket;
-    private JSONObject canvasJson = new JSONObject();
-	private JSONObject chatboxJson = new JSONObject();
    
     public ServerRunner (WhiteBoardServer server, Socket currentSocket, boolean isManager)  {
         this.server = server;
@@ -31,11 +31,15 @@ public class ServerRunner implements Runnable  {
     	
     	OutputStreamWriter writer;
 		try {
+			JSONObject canvasJson = server.getCanvasJson();
+			JSONObject chatboxJson = server.getChatbocxJson();
+			
 			writer = new OutputStreamWriter(currentSocket.getOutputStream(), "UTF-8");
 			
 			if (!canvasJson.isEmpty()) {
 				writer.write(canvasJson.toString() + "\n");
 				writer.flush();
+				System.out.println(canvasJson);
 	    	} 
 			
 			if (!chatboxJson.isEmpty()) {
@@ -44,9 +48,9 @@ public class ServerRunner implements Runnable  {
 	    	}
 			
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
     	
     }
@@ -98,11 +102,11 @@ public class ServerRunner implements Runnable  {
 					}
 					
 					if (json.getString("header").equals("canvas")) {
-						canvasJson = json;
+						server.setCanvasJson(json);
 					}
 					
 					if (json.getString("header").equals("chatbox")) {
-						chatboxJson = json;
+						server.setChatboxJson(json);
 					}
 					
 					if (json.getString("header").equals("remove")) {
@@ -139,7 +143,7 @@ public class ServerRunner implements Runnable  {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
     }
 }

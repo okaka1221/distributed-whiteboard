@@ -66,6 +66,16 @@ public class ManagerRunner extends Thread {
 					writer.flush();
 				} 
 				
+				if (json.getString("header").equals("error")) {
+					String message = json.getString("body");
+					if (message.equals("multiple manager")) {
+						JOptionPane.showMessageDialog(null, "A manager already exists. Please join as a client.", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					
+					socket.close();	
+					System.exit(0);
+				}
+				
 				if (json.getString("header").equals("canvas")) {
 					String encodedImage = json.getString("body");
 					
@@ -105,7 +115,7 @@ public class ManagerRunner extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
     }
     

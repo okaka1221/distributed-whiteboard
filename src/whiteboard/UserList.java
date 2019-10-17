@@ -90,12 +90,10 @@ public class UserList extends JPanel implements ActionListener {
 			writer = new OutputStreamWriter(this.managerSocket.getOutputStream(), "UTF-8");
 			writer.write(json.toString() + "\n");
 			writer.flush();
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (Exception error) {
+			JOptionPane.showMessageDialog(null, "Connection Failed", "Error", JOptionPane.ERROR_MESSAGE);
+        	System.out.println(error.getMessage());
+        	System.exit(0);
 		}	
 	}
 }

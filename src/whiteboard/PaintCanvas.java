@@ -10,6 +10,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+
 import org.json.*;
 
 import java.util.Base64;
@@ -228,8 +230,10 @@ public class PaintCanvas extends Canvas implements MouseListener, MouseMotionLis
 			writer.write(json.toString() + "\n");
 			writer.flush();
         } 
-        catch (IOException e1) {
-			e1.printStackTrace();
+        catch (IOException e) {
+        	JOptionPane.showMessageDialog(null, "Connection Failed", "Error", JOptionPane.ERROR_MESSAGE);
+        	System.out.println(e.getMessage());
+        	System.exit(0);
 		}
 		
 	}

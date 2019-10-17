@@ -262,9 +262,11 @@ public class Whiteboard extends JFrame implements ActionListener {
 				OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
 				writer.write(json.toString() + "\n");
 				writer.flush();
-	        }catch(Exception e1)  {
-	            e1.printStackTrace();
-	        }
+	        } catch (UnsupportedEncodingException e) {
+				System.out.println(e.getMessage());
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
 			
 			System.out.println("Manager quit.");
 			System.exit(0);
@@ -287,14 +289,11 @@ public class Whiteboard extends JFrame implements ActionListener {
 				writer.write(json.toString() + "\n");
 				writer.flush();
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 			
-			System.out.println("Client disconnected.");
 			System.exit(0);
 		}
 	}

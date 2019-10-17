@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.awt.Insets;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 public class ChatBox extends JFrame {
@@ -115,9 +116,12 @@ public class ChatBox extends JFrame {
 			OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
 			writer.write(json.toString() + "\n");
 			writer.flush();
-        }catch(Exception e1)  {
-            e1.printStackTrace();
+        }catch(Exception e)  {
+        	JOptionPane.showMessageDialog(null, "Connection Failed", "Error", JOptionPane.ERROR_MESSAGE);
+        	System.out.println(e.getMessage());
+			System.exit(0);
         }
+        
         this.inputArea.setText("");
 	}
 	
