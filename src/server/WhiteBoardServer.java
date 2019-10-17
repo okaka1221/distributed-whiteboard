@@ -59,17 +59,20 @@ public class WhiteBoardServer extends Thread {
 		    	System.out.println("New Client connected! IP is" + ip);
 		    	System.out.println("Usernaem: " + username);
 		    	ServerRunner sr = new ServerRunner(this, socket, false);
-		    	sockets.put(username, socket);
-	       	   	System.out.println(sockets.size());
-	       	   	Thread thread = new Thread(sr);
-	       	   	thread.start();
-	       	   	
-		    	JSONObject json = new JSONObject();
-	            json.put("header", "join");
-				json.put("body", username);
-				OutputStreamWriter writer = new OutputStreamWriter(managerSocket.getOutputStream(), "UTF-8");
-				writer.write(json.toString() + "\n");
-				writer.flush();
+		    	
+		    	if (!sockets.containsKey(username)) {
+			    	sockets.put(username, socket);
+		       	   	System.out.println(sockets.size());
+		       	   	Thread thread = new Thread(sr);
+		       	   	thread.start();
+		       	   	
+			    	JSONObject json = new JSONObject();
+		            json.put("header", "join");
+					json.put("body", username);
+					OutputStreamWriter writer = new OutputStreamWriter(managerSocket.getOutputStream(), "UTF-8");
+					writer.write(json.toString() + "\n");
+					writer.flush();
+		    	}
 		    }
         }
    }
