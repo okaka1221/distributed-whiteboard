@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import whiteboard.ChatBox;
 import whiteboard.PaintCanvas;
+import whiteboard.UserList;
 import whiteboard.Whiteboard;
 
 public class JoinWhiteBoard {
@@ -24,7 +25,7 @@ public class JoinWhiteBoard {
 	private JoinWhiteBoard() {
 		HOST = "localhost";
 		PORT = 8000;
-		USERNAME = "#TESTCIENT#";
+		USERNAME = "#TESTCIENT11#";
 		new JoinWhiteBoard(HOST, PORT, USERNAME);
 	}
 	
@@ -44,11 +45,11 @@ public class JoinWhiteBoard {
 			
 			contentArea = new JTextArea();
 			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
-			
-			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, false);
+			UserList userlist = new UserList(null, false);
+			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, userlist, false);
 			whiteboard.setVisible(true);
 			
-			Thread thread = new Thread(new ClientRunner(socket, canvas, contentArea, USERNAME));
+			Thread thread = new Thread(new ClientRunner(socket, userlist, canvas, contentArea));
 			thread.start();
         } 
         catch (UnknownHostException e) {

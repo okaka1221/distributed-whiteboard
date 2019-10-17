@@ -34,23 +34,24 @@ public class Whiteboard extends JFrame implements ActionListener {
 	
 	private ChatBox chatbox;
 	
-	public Whiteboard(PaintCanvas canvas, ChatBox chatbox, boolean manager) {
+	public Whiteboard(PaintCanvas canvas, ChatBox chatbox, UserList userlist, boolean manager) {
 		this.chatbox = chatbox;
 		this.canvas = canvas;
 		this.menuItem = new MenuItem(canvas);
 		
+		JSplitPane sp = new JSplitPane();
+		
 		//Make the main window
 		setTitle("Distributed Whiteboard");
 		setResizable(false);
-		setSize(800, 600);
+		setSize(1100, 600);
 		
         //Make a divider to seperate drawing space
         JSplitPane splitPane = new JSplitPane();
 		splitPane.setDividerSize(0);
-		getContentPane().add(splitPane);
         
         //Make the canvas
-		Container drawContainer = new Container();
+		JPanel drawContainer = new JPanel();
 		drawContainer.setBackground(Color.WHITE);
 		splitPane.setRightComponent(drawContainer);
 		canvas.setBounds(10, 10, 615, 535);
@@ -61,6 +62,14 @@ public class Whiteboard extends JFrame implements ActionListener {
 		toolsPanel.setLayout(new GridLayout(12, 1));
 		splitPane.setLeftComponent(toolsPanel);
         
+		JPanel ulPanel = new JPanel();
+		ulPanel.add(userlist);
+		
+		sp.setLeftComponent(splitPane);
+		sp.setRightComponent(ulPanel);
+		sp.setDividerSize(0);
+		getContentPane().add(sp);
+		
 
         //Make the buttons and functional elements
 		freedrawButton = new JToggleButton("Freedraw");

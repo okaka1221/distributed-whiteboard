@@ -7,9 +7,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ServerRunner implements Runnable  {
@@ -75,16 +77,17 @@ public class ServerRunner implements Runnable  {
 						server.setChatboxJson(json);
 					}
 					
-					if (json.getString("header").equals("Name")) {
-						System.out.print("server successfully receive client name from client side: ");
-						System.out.println(json.getString("body"));
-					}
-					
-					if (json.getString("header").equals("Remove")) {
-						String username = json.getString("body");       //remove socket and close socket						
+					if (json.getString("header").equals("remove")) {
+						String username = json.getString("body");       //remove socket and close socket												
 						sockets.get(username).close();
 						sockets.remove(username);
 						System.out.println("gooooooooood");
+						
+						List<String> userList = new ArrayList<>(this.sockets.keySet());
+					    JSONArray jArray = new JSONArray(userList);
+			            json.put("header", "name");
+						json.put("body", jArray);       //send the size information to WhiteBoradClient
+						json.put("manager", server.manager);
 					}
 					
 					if (json.getString("header").equals("close")) {

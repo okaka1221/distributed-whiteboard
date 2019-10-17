@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.*;
  
@@ -19,7 +20,7 @@ public class WhiteBoardServer extends Thread {
 	DataInputStream dis;
 	Socket managerSocket = null;
 	int managerCount = 0;
-	private String manager = null;
+	public String manager = null;
 	
 	public WhiteBoardServer() throws IOException, SQLException, ClassNotFoundException, Exception {
 		ss = new ServerSocket(8000);
@@ -28,7 +29,7 @@ public class WhiteBoardServer extends Thread {
 		while(true) {
 		    socket = ss.accept();
 		    dis = new DataInputStream(socket.getInputStream());
-		    boolean manager = dis.readBoolean();
+		    boolean isManager = dis.readBoolean();
 		    
 		    String username = "";
 		    while (dis.available() > 0) {
@@ -36,26 +37,24 @@ public class WhiteBoardServer extends Thread {
 		    	username += s;
 		    }
 		    
-		    System.out.println(manager);
+		    System.out.println(isManager);
 		    InetAddress ip = socket.getInetAddress();
 		    
-		    if ((manager) && (managerCount == 0)) {
+		    if ((isManager) && (managerCount == 0)) {
 		    	managerCount++;
 		    	managerSocket = socket;
 		    	System.out.println("Manager connected! IP is " + ip);
 		    	System.out.println("Usernaem: " + username);
 		    	ServerRunner msr = new ServerRunner(this, socket, true);
 		    	sockets.put(username, socket);
+		    	manager = username;
 		    	Thread thread = new Thread(msr);
 	            thread.start();
-		    }
-		    else if((manager) && (managerCount != 0)) {
+		    } else if((isManager) && (managerCount != 0)) {
 		    	throw new IOException("A manager already exists! Please join as a client!");
-		    }
-		    else if((!manager) && (managerCount == 0)) {
+		    } else if((!isManager) && (managerCount == 0)) {
 		    	throw new IOException("No manager available! Please join as a manager!");
-		    }
-		    else if (!sockets.containsKey(username)){
+		    } else if (!sockets.containsKey(username)){
 		    	System.out.println("New Client connected! IP is" + ip);
 		    	System.out.println("Usernaem: " + username);
 		    	ServerRunner sr = new ServerRunner(this, socket, false);
@@ -63,14 +62,20 @@ public class WhiteBoardServer extends Thread {
 		    	System.out.println(sockets.size());
 		    	Thread thread = new Thread(sr);
 	            thread.start();
-	            
-	            JSONObject json = new JSONObject();
-	            json.put("header", "Name");
-				json.put("body", username);       //send the size information to WhiteBoradClient
-				OutputStreamWriter writer = new OutputStreamWriter(managerSocket.getOutputStream(), "UTF-8");
+		    }
+		    
+		    System.out.println(this.sockets.keySet());
+		    for (Socket s: sockets.values()) {
+			    List<String> userList = new ArrayList<>(this.sockets.keySet());
+			    JSONObject json = new JSONObject();
+			    JSONArray jArray = new JSONArray(userList);
+	            json.put("header", "name");
+				json.put("body", jArray);       //send the size information to WhiteBoradClient
+				json.put("manager", manager);
+				OutputStreamWriter writer = new OutputStreamWriter(s.getOutputStream(), "UTF-8");
 				writer.write(json.toString() + "\n");
 				writer.flush();
-		    } 
+		    }
         }
    }
    
@@ -81,6 +86,10 @@ public class WhiteBoardServer extends Thread {
        catch(Exception e)  {
            e.printStackTrace();
        }
+   }
+   
+   public void sendUserList() {
+	   
    }
    
    public Map<String, Socket> getSockets() {

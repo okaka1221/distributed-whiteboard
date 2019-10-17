@@ -7,26 +7,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JTextArea;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import whiteboard.PaintCanvas;
+import whiteboard.UserList;
 
 public class ClientRunner extends Thread {
     private Socket socket;
+    private UserList userlist;
     private PaintCanvas canvas;
     private JTextArea contentArea;
-    private String name; 
     
-    public ClientRunner(Socket socket, PaintCanvas canvas, JTextArea  conteArea, String name) {
+    public ClientRunner(Socket socket, UserList userlist, PaintCanvas canvas, JTextArea  conteArea) {
     	this.socket = socket;
+    	this.userlist = userlist;
         this.canvas = canvas;
         this.contentArea = conteArea;
-        this.name = name;
     }
    
     public void run()  {
@@ -50,7 +54,9 @@ public class ClientRunner extends Thread {
 							canvas.setBuffer(image);
 						}
 					}
-				} else if (json.getString("header").equals("chatbox")) {
+				} 
+				
+				if (json.getString("header").equals("chatbox")) {
 					String message = json.getString("body");
 					System.out.println(message.length());
 					if (message.length() > 0) {
@@ -60,6 +66,19 @@ public class ClientRunner extends Thread {
 					}
 				}
 				
+				if (json.getString("header").equals("name")) {
+					JSONArray jArray = json.getJSONArray("body");
+					List<String> userList = new ArrayList<String>();
+					
+					for (int i = 0; i < jArray.length(); i++) {
+						userList.add(jArray.getString(i));
+					}
+					
+					userlist.setManagerName(json.getString("manager"));
+					userlist.setNameList(userList);
+					userlist.revalidate();
+					userlist.repaint();
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -79,10 +98,5 @@ public class ClientRunner extends Thread {
     public JTextArea getContentArea()
     {
     	return this.contentArea;
-    }
-    
-    public String getClientName()
-    {
-    	return this.name;
     }
 }

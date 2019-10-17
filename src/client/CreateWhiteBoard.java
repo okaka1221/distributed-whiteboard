@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import whiteboard.ChatBox;
 import whiteboard.ManagerChatBox;
 import whiteboard.PaintCanvas;
+import whiteboard.UserList;
 import whiteboard.Whiteboard;
 
 public class CreateWhiteBoard {
@@ -44,13 +45,12 @@ public class CreateWhiteBoard {
 			dos.writeChars(USERNAME);
 			dos.flush();
 			
-			ClientRunner managerRunner = new ManagerRunner(socket, canvas, contentArea, USERNAME);
-			ChatBox chatbox = new ManagerChatBox(socket, contentArea, (ManagerRunner) managerRunner, USERNAME);
-			
-			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, true);
+			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
+			UserList userlist = new UserList(socket, true);
+			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, userlist, true);
 			whiteboard.setVisible(true);
 			
-			Thread thread = new Thread(managerRunner);
+			Thread thread = new Thread(new ClientRunner(socket, userlist, canvas, contentArea));
 			thread.start();
         } 
         catch (UnknownHostException e) {
