@@ -38,7 +38,7 @@ public class UserList extends JPanel implements ActionListener {
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
         
 	    JLabel label = new JLabel("User List");
-	    label.setFont (label.getFont ().deriveFont (32.0f));
+	    label.setFont (label.getFont ().deriveFont (24.0f));
 	    listPanel.add(label);
 	    
 	    for (String name : nameList) {
