@@ -282,7 +282,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 		if (ans == JOptionPane.YES_OPTION) {
 			try {
 				JSONObject json = new JSONObject();
-				json.put("header", "remove");
+				json.put("header", "exit");
 				json.put("body", this.username);
 				OutputStreamWriter writer;
 				writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");

@@ -26,16 +26,32 @@ public class WhiteBoardServer extends Thread {
 		
 		while(true) {
 		    socket = ss.accept();
-		    dis = new DataInputStream(socket.getInputStream());
-		    boolean isManager = dis.readBoolean();
 		    
 		    String username = "";
-		    while (dis.available() > 0) {
-		    	String s = String.valueOf(dis.readChar());
-		    	username += s;
+		    boolean isManager = false;
+		    
+		    InputStream is = socket.getInputStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			String line;
+			
+		    while(true) {
+		    	while ((line = reader.readLine()) != null) {
+		    		JSONObject json = new JSONObject(line);
+		    		if (json.getString("header").equals("connect")) {
+						username = json.getString("body");
+						
+						if (json.getString("type").equals("manager")) {
+							isManager = true;
+						}
+					}
+		    		break;
+		    	}
+		    	
+		    	if (!username.isEmpty()) {
+		    		break;
+		    	}
 		    }
 		    
-		    System.out.println(managerCount);
 		    InetAddress ip = socket.getInetAddress();
 		    
 		    if ((isManager) && (managerCount == 0)) {
@@ -120,7 +136,6 @@ public class WhiteBoardServer extends Thread {
 	   this.managerSocket = null;
 	   this.managerCount = 0;
 	   this.manager = null;
-	   System.out.println("test");
    }
    
    public Map<String, Socket> getSockets() {

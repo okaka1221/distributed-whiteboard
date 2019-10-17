@@ -26,7 +26,7 @@ public class CreateWhiteBoard {
 	private CreateWhiteBoard() {
 		HOST = "localhost";
 		PORT = 8000;
-		USERNAME = "#TESTMANAGER#11";
+		USERNAME = "#TESTMANAGER#";
 		new CreateWhiteBoard(HOST, PORT, USERNAME);
 	}
 	
@@ -40,10 +40,13 @@ public class CreateWhiteBoard {
 			canvas = new PaintCanvas(socket);
 			contentArea = new JTextArea();
 			
-			dos = new DataOutputStream(socket.getOutputStream());
-			dos.writeBoolean(true);
-			dos.writeChars(USERNAME);
-			dos.flush();
+			JSONObject json = new JSONObject();
+			json.put("header", "connect");
+			json.put("body", USERNAME);
+			json.put("type", "manager");
+			OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+			writer.write(json.toString() + "\n");
+			writer.flush();
 			
 			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
 			UserList userlist = new UserList(socket, true);

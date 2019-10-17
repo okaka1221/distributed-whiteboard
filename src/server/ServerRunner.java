@@ -121,6 +121,16 @@ public class ServerRunner implements Runnable  {
 						server.sendUserList();
 					}
 					
+					if (json.getString("header").equals("exit")) {
+						String username = json.getString("body");
+						Socket socket = sockets.get(username);
+						
+						sockets.get(username).close();
+						sockets.remove(username);
+						server.setSockets(sockets);
+						server.sendUserList();
+					}
+					
 					for (Socket s: sockets.values()) {
 						OutputStreamWriter writer = new OutputStreamWriter(s.getOutputStream(), "UTF-8");
 						writer.write(json.toString() + "\n");

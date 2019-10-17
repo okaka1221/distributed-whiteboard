@@ -36,7 +36,7 @@ public class JoinWhiteBoard {
 	private JoinWhiteBoard() {
 		HOST = "localhost";
 		PORT = 8000;
-		USERNAME = "#TESTCIENTaaa#";
+		USERNAME = "#TESTCIENT#aaa";
 		new JoinWhiteBoard(HOST, PORT, USERNAME);
 	}
 	
@@ -49,10 +49,13 @@ public class JoinWhiteBoard {
 			socket = new Socket(HOST, PORT);
 			canvas = new PaintCanvas(socket);
 			
-			dos = new DataOutputStream(socket.getOutputStream());
-			dos.writeBoolean(false);
-			dos.writeChars(USERNAME);
-			dos.flush();
+			JSONObject json = new JSONObject();
+			json.put("header", "connect");
+			json.put("body", USERNAME);
+			json.put("type", "normal");
+			OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+			writer.write(json.toString() + "\n");
+			writer.flush();
 			
 			contentArea = new JTextArea();
 			chatbox = new ChatBox(socket, contentArea, USERNAME);
