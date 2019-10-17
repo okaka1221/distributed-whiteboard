@@ -1,6 +1,7 @@
 package server;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -68,6 +69,30 @@ public class ServerRunner implements Runnable  {
 				JSONObject json = new JSONObject(line);
 				if (json.getString("header").length() > 0 && json.getString("body").length() > 0) {
 					this.sockets = server.getSockets();
+					
+					if (json.getString("header").equals("accept")) {
+						String username = json.getString("body");
+						Socket socket = sockets.get(username);
+						
+						json.put("header", "permission");
+						json.put("body", "accept");
+						OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+						writer.write(json.toString() + "\n");
+						writer.flush();
+						server.sendUserList();
+					} 
+
+					if (json.getString("header").equals("reject")) {
+						String username = json.getString("body");
+						Socket socket = sockets.get(username);
+						
+						json.put("header", "permission");
+						json.put("body", "reject");
+						OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+						writer.write(json.toString() + "\n");
+						writer.flush();			
+						sockets.remove(username);
+					}
 					
 					if (json.getString("header").equals("canvas")) {
 						server.setCanvasJson(json);

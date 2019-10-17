@@ -50,6 +50,7 @@ public class WhiteBoardServer extends Thread {
 		    	manager = username;
 		    	Thread thread = new Thread(msr);
 	            thread.start();
+			    sendUserList();
 		    } else if((isManager) && (managerCount != 0)) {
 		    	throw new IOException("A manager already exists! Please join as a client!");
 		    } else if((!isManager) && (managerCount == 0)) {
@@ -59,20 +60,14 @@ public class WhiteBoardServer extends Thread {
 		    	System.out.println("Usernaem: " + username);
 		    	ServerRunner sr = new ServerRunner(this, socket, false);
 		    	sockets.put(username, socket);
-		    	System.out.println(sockets.size());
-		    	Thread thread = new Thread(sr);
-	            thread.start();
-		    }
-		    
-		    System.out.println(this.sockets.keySet());
-		    for (Socket s: sockets.values()) {
-			    List<String> userList = new ArrayList<>(this.sockets.keySet());
-			    JSONObject json = new JSONObject();
-			    JSONArray jArray = new JSONArray(userList);
-	            json.put("header", "name");
-				json.put("body", jArray);       //send the size information to WhiteBoradClient
-				json.put("manager", manager);
-				OutputStreamWriter writer = new OutputStreamWriter(s.getOutputStream(), "UTF-8");
+	       	   	System.out.println(sockets.size());
+	       	   	Thread thread = new Thread(sr);
+	       	   	thread.start();
+	       	   	
+		    	JSONObject json = new JSONObject();
+	            json.put("header", "join");
+				json.put("body", username);
+				OutputStreamWriter writer = new OutputStreamWriter(managerSocket.getOutputStream(), "UTF-8");
 				writer.write(json.toString() + "\n");
 				writer.flush();
 		    }
@@ -89,7 +84,26 @@ public class WhiteBoardServer extends Thread {
    }
    
    public void sendUserList() {
-	   
+		for (Socket s: sockets.values()) {
+		    List<String> userList = new ArrayList<>(this.sockets.keySet());
+		    JSONObject json = new JSONObject();
+		    JSONArray jArray = new JSONArray(userList);
+		    json.put("header", "name");
+			json.put("body", jArray);       //send the size information to WhiteBoradClient
+			json.put("manager", this.manager);
+			OutputStreamWriter writer;
+			try {
+				writer = new OutputStreamWriter(s.getOutputStream(), "UTF-8");
+				writer.write(json.toString() + "\n");
+				writer.flush();
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
    }
    
    public Map<String, Socket> getSockets() {

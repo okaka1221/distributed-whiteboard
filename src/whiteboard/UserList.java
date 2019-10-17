@@ -22,7 +22,7 @@ public class UserList extends JPanel implements ActionListener {
 	private List<String> nameList = new ArrayList<String>();
     private Socket managerSocket;
     private boolean isManager;
-    private String mananger;
+    private String mananger = "";
 	
 	public UserList(Socket socket, boolean isManager) {
 	    this.managerSocket = socket;
@@ -41,7 +41,6 @@ public class UserList extends JPanel implements ActionListener {
 	    label.setFont (label.getFont ().deriveFont (32.0f));
 	    listPanel.add(label);
 	    
-	    System.out.println(this.nameList);
 	    for (String name : nameList) {
 	    	JSplitPane splitPane = new JSplitPane();
 	    	splitPane.setPreferredSize(new Dimension(260, 50));
@@ -72,6 +71,7 @@ public class UserList extends JPanel implements ActionListener {
     }
 	
 	public void setManagerName(String name) {
+		System.out.println(name);
 		this.mananger = name;
 	}
 	

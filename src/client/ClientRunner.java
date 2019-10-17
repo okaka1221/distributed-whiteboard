@@ -6,12 +6,14 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 import org.json.JSONArray;
@@ -21,12 +23,14 @@ import whiteboard.PaintCanvas;
 import whiteboard.UserList;
 
 public class ClientRunner extends Thread {
+	private JoinWhiteBoard client;
     private Socket socket;
     private UserList userlist;
     private PaintCanvas canvas;
     private JTextArea contentArea;
     
-    public ClientRunner(Socket socket, UserList userlist, PaintCanvas canvas, JTextArea  conteArea) {
+    public ClientRunner(JoinWhiteBoard client, Socket socket, UserList userlist, PaintCanvas canvas, JTextArea  conteArea) {
+    	this.client = client;
     	this.socket = socket;
     	this.userlist = userlist;
         this.canvas = canvas;
@@ -41,6 +45,17 @@ public class ClientRunner extends Thread {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				JSONObject json = new JSONObject(line);
+				
+				if (json.getString("header").equals("permission")) {
+					String res = json.getString("body");
+					
+					if (res.equals("accept")) {
+						client.establishWhitebord();
+					} else {
+						socket.close();
+						System.exit(0);
+					}
+				} 
 				
 				if (json.getString("header").equals("canvas")) {
 					String encodedImage = json.getString("body");
@@ -67,6 +82,7 @@ public class ClientRunner extends Thread {
 				}
 				
 				if (json.getString("header").equals("name")) {
+					String manager = json.getString("manager");
 					JSONArray jArray = json.getJSONArray("body");
 					List<String> userList = new ArrayList<String>();
 					
@@ -74,7 +90,7 @@ public class ClientRunner extends Thread {
 						userList.add(jArray.getString(i));
 					}
 					
-					userlist.setManagerName(json.getString("manager"));
+					userlist.setManagerName(manager);
 					userlist.setNameList(userList);
 					userlist.revalidate();
 					userlist.repaint();

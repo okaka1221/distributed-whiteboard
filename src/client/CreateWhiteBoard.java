@@ -50,7 +50,7 @@ public class CreateWhiteBoard {
 			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, userlist, true);
 			whiteboard.setVisible(true);
 			
-			Thread thread = new Thread(new ClientRunner(socket, userlist, canvas, contentArea));
+			Thread thread = new Thread(new ManagerRunner(socket, userlist, canvas, contentArea));
 			thread.start();
         } 
         catch (UnknownHostException e) {

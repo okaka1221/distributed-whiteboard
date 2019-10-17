@@ -1,12 +1,17 @@
 package client;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JTextArea;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import whiteboard.ChatBox;
@@ -16,16 +21,22 @@ import whiteboard.Whiteboard;
 
 public class JoinWhiteBoard {
 	private Socket socket;
+	
 	private PaintCanvas canvas;
 	private JTextArea contentArea;
+	private ChatBox chatbox;
+	private UserList userlist;
+	private Whiteboard whiteboard;
+	
 	DataOutputStream dos;
 	private String HOST, USERNAME;
 	private int PORT;
+	private boolean isAccepted;
 	
 	private JoinWhiteBoard() {
 		HOST = "localhost";
 		PORT = 8000;
-		USERNAME = "#TESTCIENT11#";
+		USERNAME = "#TESTCIENT#";
 		new JoinWhiteBoard(HOST, PORT, USERNAME);
 	}
 	
@@ -44,12 +55,11 @@ public class JoinWhiteBoard {
 			dos.flush();
 			
 			contentArea = new JTextArea();
-			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
-			UserList userlist = new UserList(null, false);
-			Whiteboard whiteboard = new Whiteboard(canvas, chatbox, userlist, false);
-			whiteboard.setVisible(true);
+			chatbox = new ChatBox(socket, contentArea, USERNAME);
+			userlist = new UserList(null, false);
+			whiteboard = new Whiteboard(canvas, chatbox, userlist, false);
 			
-			Thread thread = new Thread(new ClientRunner(socket, userlist, canvas, contentArea));
+			Thread thread = new Thread(new ClientRunner(this, socket, userlist, canvas, contentArea));
 			thread.start();
         } 
         catch (UnknownHostException e) {
@@ -58,6 +68,10 @@ public class JoinWhiteBoard {
         catch (IOException e) {
 			e.printStackTrace();
         }
+	}
+	
+	public void establishWhitebord() {
+		whiteboard.setVisible(true);
 	}
 	
 	public static void main(String args[])  {
