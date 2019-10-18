@@ -39,7 +39,6 @@ public class ServerRunner implements Runnable  {
 			if (!canvasJson.isEmpty()) {
 				writer.write(canvasJson.toString() + "\n");
 				writer.flush();
-				System.out.println(canvasJson);
 	    	} 
 			
 			if (!chatboxJson.isEmpty()) {
