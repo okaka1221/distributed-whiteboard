@@ -58,7 +58,7 @@ public class CreateWhiteBoard {
 			writer.flush();
 			
 			ChatBox chatbox = new ChatBox(socket, contentArea, USERNAME);
-			UserList userlist = new UserList(socket, true);
+			UserList userlist = new UserList(socket, true, USERNAME);
 			Whiteboard whiteboard = new Whiteboard(socket, USERNAME, canvas, chatbox, userlist, true);
 			whiteboard.setVisible(true);
 			
@@ -68,7 +68,7 @@ public class CreateWhiteBoard {
         	JOptionPane.showMessageDialog(null, "Unknown Host.", "Error", JOptionPane.ERROR_MESSAGE);
 			System.out.println(e.getMessage());
         } catch (SocketException e){
-        	JOptionPane.showMessageDialog(null, "Server is not running.", "Error", JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, "Wrong port number.", "Error", JOptionPane.ERROR_MESSAGE);
 			System.out.println(e.getMessage());
         } catch (IOException e) {
         	JOptionPane.showMessageDialog(null, "Connection Failed", "Error", JOptionPane.ERROR_MESSAGE);

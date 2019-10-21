@@ -65,7 +65,7 @@ public class JoinWhiteBoard {
 			
 			contentArea = new JTextArea();
 			chatbox = new ChatBox(socket, contentArea, USERNAME);
-			userlist = new UserList(null, false);
+			userlist = new UserList(null, false, USERNAME);
 			whiteboard = new Whiteboard(socket, USERNAME, canvas, chatbox, userlist, false);
 			
 			Thread thread = new Thread(new ClientRunner(this, socket, userlist, canvas, contentArea));
@@ -74,7 +74,7 @@ public class JoinWhiteBoard {
         	JOptionPane.showMessageDialog(null, "Unknown Host.", "Error", JOptionPane.ERROR_MESSAGE);
 			System.out.println(e.getMessage());
         } catch (SocketException e){
-        	JOptionPane.showMessageDialog(null, "Server is not running.", "Error", JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, "Wrong port number.", "Error", JOptionPane.ERROR_MESSAGE);
 			System.out.println(e.getMessage());
         } catch (IOException e) {
         	JOptionPane.showMessageDialog(null, "Connection Failed", "Error", JOptionPane.ERROR_MESSAGE);

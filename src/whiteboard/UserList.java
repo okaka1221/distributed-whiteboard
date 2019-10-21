@@ -20,10 +20,12 @@ public class UserList extends JPanel implements ActionListener {
     private Socket managerSocket;
     private boolean isManager;
     private String mananger = "";
+    private String username;
 	
-	public UserList(Socket socket, boolean isManager) {
+	public UserList(Socket socket, boolean isManager, String username) {
 	    this.managerSocket = socket;
 	    this.isManager = isManager;
+	    this.username = username;
 	    setLayout();
 	}
 	
@@ -35,10 +37,14 @@ public class UserList extends JPanel implements ActionListener {
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
         
 	    JLabel label = new JLabel("User List");
+	    label.setPreferredSize(new Dimension(260, 20));
 	    label.setFont (label.getFont ().deriveFont (24.0f));
 	    listPanel.add(label);
 	    
 	    for (String name : nameList) {
+	    	if (name.equals(this.username)) {
+	    		continue;
+	    	}
 	    	JSplitPane splitPane = new JSplitPane();
 	    	splitPane.setPreferredSize(new Dimension(260, 50));
 	    	splitPane.setDividerLocation(180);

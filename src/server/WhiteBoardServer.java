@@ -173,6 +173,8 @@ public class WhiteBoardServer extends Thread {
 	   this.managerSocket = null;
 	   this.managerCount = 0;
 	   this.manager = null;
+	   this.canvasJson = new JSONObject();
+	   this.chatboxJson = new JSONObject();
    }
    
    public Map<String, Socket> getSockets() {

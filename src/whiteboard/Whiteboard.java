@@ -183,7 +183,7 @@ public class Whiteboard extends JFrame implements ActionListener {
 			saveAsMenu.addActionListener(this);
 			menu.add(saveAsMenu);
 			
-			exitMenu = new JMenuItem("Exit");
+			exitMenu = new JMenuItem("Close");
 			exitMenu.setActionCommand("exit");
 			exitMenu.addActionListener(this);
 			menu.add(exitMenu);
