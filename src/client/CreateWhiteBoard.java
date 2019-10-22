@@ -68,7 +68,7 @@ public class CreateWhiteBoard {
         	JOptionPane.showMessageDialog(null, "Unknown Host.", "Error", JOptionPane.ERROR_MESSAGE);
 			System.out.println(e.getMessage());
         } catch (SocketException e){
-        	JOptionPane.showMessageDialog(null, "Connection Error.", "Error", JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, "Failed to establish connection.", "Error", JOptionPane.ERROR_MESSAGE);
 			System.out.println(e.getMessage());
         } catch (IOException e) {
         	JOptionPane.showMessageDialog(null, "Connection Failed", "Error", JOptionPane.ERROR_MESSAGE);
