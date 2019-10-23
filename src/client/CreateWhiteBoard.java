@@ -27,7 +27,7 @@ public class CreateWhiteBoard {
 	private String USERNAME;
 	
 	private CreateWhiteBoard(String args[]) {
-		JoinWhiteBoardArgs bean = new JoinWhiteBoardArgs();
+		CreateWhiteBoardArgs bean = new CreateWhiteBoardArgs();
 		
 		// Parse parameters.
         CmdLineParser parser = new CmdLineParser(bean);
